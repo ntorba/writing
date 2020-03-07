@@ -3,7 +3,7 @@
     
         "post0": {
             "title": "Title",
-            "content": "import metaflow . Let&#39;s Look at Metaflow . Let&#39;s get this thing converted | . #collapse from metaflow import FlowSpec, step class LinearFlow(FlowSpec): @step def start(self): self.my_var = &#39;hello world&#39; self.next(self.a) @step def a(self): print(&#39;the data artifact is: %s&#39; % self.my_var) self.next(self.end) @step def end(self): print(&#39;the data artifact is still: %s&#39; % self.my_var) if __name__ == &#39;__main__&#39;: LinearFlow() . .",
+            "content": "Exploring Metaflow . Want to use this to take a look at how metaflow works, specifically their decorators | . import metaflow . Let&#39;s Look at Metaflow . Let&#39;s get this thing converted | . #collapse from metaflow import FlowSpec, step class LinearFlow(FlowSpec): @step def start(self): self.my_var = &#39;hello world&#39; self.next(self.a) @step def a(self): print(&#39;the data artifact is: %s&#39; % self.my_var) self.next(self.end) @step def end(self): print(&#39;the data artifact is still: %s&#39; % self.my_var) if __name__ == &#39;__main__&#39;: LinearFlow() . .",
             "url": "https://ntorba.github.io/writing/2020/03/08/metaflow-exploration.html",
             "relUrl": "/2020/03/08/metaflow-exploration.html",
             "date": " • Mar 8, 2020"
