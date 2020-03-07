@@ -210,7 +210,55 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>(Flowspec)[<a href="https://github.com/Netflix/metaflow/blob/master/metaflow/flowspec.py">https://github.com/Netflix/metaflow/blob/master/metaflow/flowspec.py</a>]</p>
+<p>(Flowspec)[<a href="https://github.com/Netflix/metaflow/blob/master/metaflow/flowspec.py">https://github.com/Netflix/metaflow/blob/master/metaflow/flowspec.py</a>] definition and constructor. Full code can be found at the link.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FlowSpec</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Main class from which all Flows should inherit.</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    script_name</span>
+<span class="sd">    index</span>
+<span class="sd">    input</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># Attributes that are not saved in the datastore when checkpointing.</span>
+    <span class="c1"># Name starting with '__', methods, functions and Parameters do not need</span>
+    <span class="c1"># to be listed.</span>
+    <span class="n">_EPHEMERAL</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'_EPHEMERAL'</span><span class="p">,</span>
+                  <span class="s1">'_datastore'</span><span class="p">,</span>
+                  <span class="s1">'_cached_input'</span><span class="p">,</span>
+                  <span class="s1">'_graph'</span><span class="p">,</span>
+                  <span class="s1">'_flow_decorators'</span><span class="p">,</span>
+                  <span class="s1">'_steps'</span><span class="p">,</span>
+                  <span class="s1">'index'</span><span class="p">,</span>
+                  <span class="s1">'input'</span><span class="p">}</span>
+
+    <span class="n">_flow_decorators</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_cli</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Construct a FlowSpec</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        use_cli : bool, optional, default: True</span>
+<span class="sd">            Set to True if the flow is invoked from __main__ or the command line</span>
+<span class="sd">        """</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_datastore</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transition</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cached_input</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span> <span class="o">=</span> <span class="n">FlowGraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">use_cli</span><span class="p">:</span>
+            <span class="c1"># we import cli here to make sure custom parameters in</span>
+            <span class="c1"># args.py get fully evaluated before cli.py is imported.</span>
+            <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">cli</span>
+            <span class="n">cli</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
 
 </div>
 </div>
