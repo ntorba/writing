@@ -3,7 +3,7 @@ layout: home
 search_exclude: true
 ---
 
-This site is built with [fastpages](https://github.com/fastai/fastpages), An easy to use blogging platform with extra features for Jupyter Notebooks.
+This is my site. Here is my first edit. 
 
 ![](images/diagram.png "https://github.com/fastai/fastpages")
 
