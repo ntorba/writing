@@ -2,10 +2,10 @@
   
     
         "post0": {
-            "title": "Title",
-            "content": "Exploring Metaflow . Want to use this to take a look at how metaflow works, specifically their decorators | . import metaflow . Let&#39;s Look at Metaflow . Let&#39;s get this thing converted | . #collapse from metaflow import FlowSpec, step class LinearFlow(FlowSpec): @step def start(self): self.my_var = &#39;hello world&#39; self.next(self.a) @step def a(self): print(&#39;the data artifact is: %s&#39; % self.my_var) self.next(self.end) @step def end(self): print(&#39;the data artifact is still: %s&#39; % self.my_var) if __name__ == &#39;__main__&#39;: LinearFlow() . .",
-            "url": "https://ntorba.github.io/writing/2020/03/08/metaflow-exploration.html",
-            "relUrl": "/2020/03/08/metaflow-exploration.html",
+            "title": "Exploring Metaflow",
+            "content": "About . Metaflow is a python package open sourced by netflix to help data scientists easily scale their project workflows. Metaflow is mainly interacted with through decorators. In this post, I want to get behind the scenes of how these decorators actually work. . #collapse-show from metaflow import FlowSpec, step class LinearFlow(FlowSpec): @step def start(self): self.my_var = &#39;hello world&#39; self.next(self.a) @step def a(self): print(&#39;the data artifact is: %s&#39; % self.my_var) self.next(self.end) @step def end(self): print(&#39;the data artifact is still: %s&#39; % self.my_var) LinearFlow() . .",
+            "url": "https://ntorba.github.io/writing/jupyter/2020/03/08/metaflow-exploration.html",
+            "relUrl": "/jupyter/2020/03/08/metaflow-exploration.html",
             "date": " • Mar 8, 2020"
         }
         
