@@ -5,7 +5,7 @@ description: Reaction to "Why your brain is not a computer"
 categories: [markdown, Torba, philosophy, first draft] 
 ---
 # Intro 
-Mathew Cobb recently wrote (Why your brain is not a computer)[https://www.theguardian.com/science/2020/feb/27/why-your-brain-is-not-a-computer-neuroscience-neural-networks-consciousness] on The Guardian. Thank you to [Data Science Weekly](https://www.datascienceweekly.org/) and [Data Exlixir](https://dataelixir.com/) newsletters for sending both sending this to me. 
+Mathew Cobb recently wrote [Why your brain is not a computer](https://www.theguardian.com/science/2020/feb/27/why-your-brain-is-not-a-computer-neuroscience-neural-networks-consciousness) on The Guardian. Thank you to [Data Science Weekly](https://www.datascienceweekly.org/) and [Data Exlixir](https://dataelixir.com/) newsletters for sending both sending this to me. 
 
 # Summary
 In this article, Cobb details some of history of the "brain as a computer metaphor." With the rise of AI, this topic has become very relevant. There are many smart people in many different camps, and its hard to figure out who has the best information when there is so much out there. 
