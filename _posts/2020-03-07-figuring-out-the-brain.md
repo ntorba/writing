@@ -2,7 +2,7 @@
 toc: true
 layout: post
 description: Reaction to "Why your brain is not a computer"
-categories: [markdown]
+categories: [markdown, Torba, philosophy, first draft] 
 ---
 # Intro 
 Mathew Cobb recently wrote (Why your brain is not a computer)[https://www.theguardian.com/science/2020/feb/27/why-your-brain-is-not-a-computer-neuroscience-neural-networks-consciousness] on The Guardian. Thank you to [Data Science Weekly](https://www.datascienceweekly.org/) and [Data Exlixir](https://dataelixir.com/) newsletters for sending both sending this to me. 
