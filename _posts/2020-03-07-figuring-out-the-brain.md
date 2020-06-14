@@ -1,6 +1,7 @@
 ---
 toc: true
 layout: post
+comments: true
 description: Reaction to "Why your brain is not a computer"
 categories: [markdown, Torba, philosophy, first draft] 
 ---
