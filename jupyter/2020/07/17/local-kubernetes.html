@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Local Kubernetes on KIND | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Local Kubernetes on KIND" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How to get a local kubernetes up and some basic commands to interact with it." />
+<meta property="og:description" content="How to get a local kubernetes up and some basic commands to interact with it." />
+<link rel="canonical" href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:image" content="https://ntorba.github.io/writing/images/chart-preview.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-07-17T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"How to get a local kubernetes up and some basic commands to interact with it.","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html"},"url":"https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html","headline":"Local Kubernetes on KIND","datePublished":"2020-07-17T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/writing/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/writing/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Local Kubernetes on KIND | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Local Kubernetes on KIND" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="How to get a local kubernetes up and some basic commands to interact with it." />
+<meta property="og:description" content="How to get a local kubernetes up and some basic commands to interact with it." />
+<link rel="canonical" href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:image" content="https://ntorba.github.io/writing/images/chart-preview.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-07-17T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"How to get a local kubernetes up and some basic commands to interact with it.","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html"},"url":"https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html","headline":"Local Kubernetes on KIND","datePublished":"2020-07-17T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    // remove paragraph tags in rendered toc (happens from notebooks)
+    var toctags = document.querySelectorAll(".toc-entry")
+    toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/writing/">Turbo</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/writing/about/">About</a><a class="page-link" href="/writing/search/">Search</a><a class="page-link" href="/writing/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Local Kubernetes on KIND</h1><p class="page-description">How to get a local kubernetes up and some basic commands to interact with it.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-17T00:00:00-05:00" itemprop="datePublished">
+        Jul 17, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      1 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/writing/categories/#jupyter">jupyter</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+<a href="https://github.com/ntorba/writing/tree/master/_notebooks/2020-07-17-local-kubernetes.ipynb" role="button">
+    <img class="notebook-badge-image" src="/writing/assets/badges/github.svg" alt="View On GitHub">
+</a>
+</div><div class="px-2">
+    <a href="https://colab.research.google.com/github/ntorba/writing/blob/master/_notebooks/2020-07-17-local-kubernetes.ipynb">
+        <img class="notebook-badge-image" src="/writing/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Intro">Intro </a></li>
+<li class="toc-entry toc-h2"><a href="#Install-kubectl">Install kubectl </a></li>
+<li class="toc-entry toc-h2"><a href="#Install-Kind">Install Kind </a></li>
+<li class="toc-entry toc-h2"><a href="#Create-your-First-Cluster">Create your First Cluster </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-17-local-kubernetes.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Intro">
+<a class="anchor" href="#Intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro<a class="anchor-link" href="#Intro"> </a>
+</h2>
+<p>This is part one of a series learning about kubernetes through seldon-core. In this post, I will introduce, <a href="">Kind</a>, an awesome tool to run a kubernetes cluster on your local computer and some basic commands to interact with the cluster (I highly suggest downloading <a href="">kubectx</a> and <a href="">kubens</a>!) If you are brand new to kubernetes, I highly reccomend you first go follow the <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/">kubernetes interactive tutorial</a> to first get a handle on basic interactions. Then, come back here to have some more fun on your own cluster.
+If you already have access to a kubernetes cluster and want to lean about seldon-core, check out <a href="">part 2</a>!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Install-kubectl">
+<a class="anchor" href="#Install-kubectl" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install kubectl<a class="anchor-link" href="#Install-kubectl"> </a>
+</h2>
+<p>If this is the fisrt time you've used kubernetes, you will need to install kubectl, the command line tool for interacting with kubernetes. This can be downloaded <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">here</a>. On mac you can use <code>brew install kubectl</code>. 
+Check your install by running:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl version --client
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Client Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.5", GitCommit:"e6503f8d8f769ace2f338794c914a96fc335df0f", GitTreeState:"clean", BuildDate:"2020-07-04T14:53:16Z", GoVersion:"go1.14.4", Compiler:"gc", Platform:"darwin/amd64"}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you see similar output, you are good to go!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Install-Kind">
+<a class="anchor" href="#Install-Kind" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Kind<a class="anchor-link" href="#Install-Kind"> </a>
+</h2>
+<p>If you're on mac, it's as simple as <code>brew install kind</code>. If not, check out this page: <a href="https://kind.sigs.k8s.io/docs/user/quick-start/">https://kind.sigs.k8s.io/docs/user/quick-start/</a></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Create-your-First-Cluster">
+<a class="anchor" href="#Create-your-First-Cluster" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create your First Cluster<a class="anchor-link" href="#Create-your-First-Cluster"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kind create cluster 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Creating cluster "kind" ...
+ <span class="ansi-green-fg">✓</span> Ensuring node image (kindest/node:v1.17.0) 🖼
+ <span class="ansi-green-fg">✓</span> Preparing nodes 📦 7l
+ <span class="ansi-green-fg">✓</span> Writing configuration 📜7l
+ <span class="ansi-green-fg">✓</span> Starting control-plane 🕹️7l
+ <span class="ansi-green-fg">✓</span> Installing CNI 🔌7l
+ <span class="ansi-green-fg">✓</span> Installing StorageClass 💾7l
+Set kubectl context to "kind-kind"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-kind
+
+Thanks for using kind! 😊
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It's as simple as that. If it is your first time running kind, it will need to download the appropiate docker image (something like kindest/node:1.17.0), which may take a few minutes. 
+After that command is finished you can check your cluster by running:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl cluster-info
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><span class="ansi-green-fg">Kubernetes master</span> is running at <span class="ansi-yellow-fg">https://127.0.0.1:32771</span>
+<span class="ansi-green-fg">KubeDNS</span> is running at <span class="ansi-yellow-fg">https://127.0.0.1:32771/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</span>
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you see output like above, displaying info about your Kubernetes master and KubeDNS, then you have successfully launched a local kubernetes cluster!</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="ntorba/writing"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/writing/jupyter/2020/07/17/local-kubernetes.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/writing/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/writing/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/writing/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Imma write some things here</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/ntorba" title="ntorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/nicktorba" title="nicktorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
