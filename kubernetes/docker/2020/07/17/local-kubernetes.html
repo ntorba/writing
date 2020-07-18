@@ -9,14 +9,14 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="How to get a local kubernetes up and some basic commands to interact with it." />
 <meta property="og:description" content="How to get a local kubernetes up and some basic commands to interact with it." />
-<link rel="canonical" href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html" />
-<meta property="og:url" content="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/17/local-kubernetes.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/07/17/local-kubernetes.html" />
 <meta property="og:site_name" content="Turbo" />
 <meta property="og:image" content="https://ntorba.github.io/writing/images/chart-preview.png" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
 <script type="application/ld+json">
-{"dateModified":"2020-07-17T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"How to get a local kubernetes up and some basic commands to interact with it.","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html"},"url":"https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html","headline":"Local Kubernetes on KIND","datePublished":"2020-07-17T00:00:00-05:00","@context":"https://schema.org"}</script>
+{"dateModified":"2020-07-17T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"How to get a local kubernetes up and some basic commands to interact with it.","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/17/local-kubernetes.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/17/local-kubernetes.html","headline":"Local Kubernetes on KIND","datePublished":"2020-07-17T00:00:00-05:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/writing/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/writing/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Local Kubernetes on KIND | Turbo</title>
@@ -25,14 +25,14 @@
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="How to get a local kubernetes up and some basic commands to interact with it." />
 <meta property="og:description" content="How to get a local kubernetes up and some basic commands to interact with it." />
-<link rel="canonical" href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html" />
-<meta property="og:url" content="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/17/local-kubernetes.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/07/17/local-kubernetes.html" />
 <meta property="og:site_name" content="Turbo" />
 <meta property="og:image" content="https://ntorba.github.io/writing/images/chart-preview.png" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-07-17T00:00:00-05:00" />
 <script type="application/ld+json">
-{"dateModified":"2020-07-17T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"How to get a local kubernetes up and some basic commands to interact with it.","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html"},"url":"https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html","headline":"Local Kubernetes on KIND","datePublished":"2020-07-17T00:00:00-05:00","@context":"https://schema.org"}</script>
+{"dateModified":"2020-07-17T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"How to get a local kubernetes up and some basic commands to interact with it.","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/17/local-kubernetes.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/17/local-kubernetes.html","headline":"Local Kubernetes on KIND","datePublished":"2020-07-17T00:00:00-05:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
@@ -103,7 +103,10 @@ window.onload = wrap_img;
     
       <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
       
-        <a class="category-tags-link" href="/writing/categories/#jupyter">jupyter</a>
+        <a class="category-tags-link" href="/writing/categories/#kubernetes">kubernetes</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/writing/categories/#docker">docker</a>
         
       
       </p>
@@ -152,7 +155,7 @@ window.onload = wrap_img;
 <h2 id="Intro">
 <a class="anchor" href="#Intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro<a class="anchor-link" href="#Intro"> </a>
 </h2>
-<p>This is part one of a series learning about kubernetes through seldon-core. In this post, I will introduce, <a href="">Kind</a>, an awesome tool to run a kubernetes cluster on your local computer and some basic commands to interact with the cluster (I highly suggest downloading <a href="">kubectx</a> and <a href="">kubens</a>!) If you are brand new to kubernetes, I highly reccomend you first go follow the <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/">kubernetes interactive tutorial</a> to first get a handle on basic interactions. Then, come back here to have some more fun on your own cluster.
+<p>This is part one of a series learning about kubernetes through seldon-core. In this post, I will introduce, <a href="">Kind</a>, an awesome tool to run a kubernetes cluster on your local computer and some basic commands to interact with the cluster (I highly suggest downloading <a href="">kubectx</a> and <a href="">kubens</a>!) If you are brand new to kubernetes, I highly reccomend you first go follow the <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/">kubernetes interactive tutorial</a> to get a handle on basic interactions. Then, come back here to have some fun on your own cluster.
 If you already have access to a kubernetes cluster and want to lean about seldon-core, check out <a href="">part 2</a>!</p>
 
 </div>
@@ -164,7 +167,7 @@ If you already have access to a kubernetes cluster and want to lean about seldon
 <h2 id="Install-kubectl">
 <a class="anchor" href="#Install-kubectl" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install kubectl<a class="anchor-link" href="#Install-kubectl"> </a>
 </h2>
-<p>If this is the fisrt time you've used kubernetes, you will need to install kubectl, the command line tool for interacting with kubernetes. This can be downloaded <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">here</a>. On mac you can use <code>brew install kubectl</code>. 
+<p>If this is the first time you've used kubernetes, you will need to install kubectl, the command line tool for interacting with kubernetes. This can be downloaded <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">here</a>. On mac you can use <code>brew install kubectl</code>. 
 Check your install by running:</p>
 
 </div>
@@ -177,7 +180,7 @@ Check your install by running:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl version --client
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl version --client --short
 </pre></div>
 
     </div>
@@ -190,7 +193,7 @@ Check your install by running:</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Client Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.5", GitCommit:"e6503f8d8f769ace2f338794c914a96fc335df0f", GitTreeState:"clean", BuildDate:"2020-07-04T14:53:16Z", GoVersion:"go1.14.4", Compiler:"gc", Platform:"darwin/amd64"}
+<pre>Client Version: v1.18.5
 </pre>
 </div>
 </div>
@@ -215,7 +218,7 @@ Check your install by running:</p>
 <h2 id="Install-Kind">
 <a class="anchor" href="#Install-Kind" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Kind<a class="anchor-link" href="#Install-Kind"> </a>
 </h2>
-<p>If you're on mac, it's as simple as <code>brew install kind</code>. If not, check out this page: <a href="https://kind.sigs.k8s.io/docs/user/quick-start/">https://kind.sigs.k8s.io/docs/user/quick-start/</a></p>
+<p>If you're on mac, it's as simple as <code>brew install kind</code>. If not, check out <a href="https://kind.sigs.k8s.io/docs/user/quick-start/">this page</a></p>
 
 </div>
 </div>
@@ -275,8 +278,8 @@ Thanks for using kind! 😊
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It's as simple as that. If it is your first time running kind, it will need to download the appropiate docker image (something like kindest/node:1.17.0), which may take a few minutes. 
-After that command is finished you can check your cluster by running:</p>
+<p>It's as simple as that. If it is your first time running kind, it will automatically download the appropiate docker image (something like kindest/node:1.17.0), which may take a few minutes. 
+After that command is finished, check if your cluster is running:</p>
 
 </div>
 </div>
@@ -335,7 +338,7 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
         theme="github-light"
         crossorigin="anonymous"
         async>
-</script><a class="u-url" href="/writing/jupyter/2020/07/17/local-kubernetes.html" hidden></a>
+</script><a class="u-url" href="/writing/kubernetes/docker/2020/07/17/local-kubernetes.html" hidden></a>
 </article>
       </div>
     </main><footer class="site-footer h-card">
