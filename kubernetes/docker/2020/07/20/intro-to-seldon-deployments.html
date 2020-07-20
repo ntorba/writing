@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Cluster Interaction Basics | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Cluster Interaction Basics" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Intro to Seldon Deployment CRD!" />
+<meta property="og:description" content="Intro to Seldon Deployment CRD!" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:image" content="https://ntorba.github.io/writing/images/chart-preview.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-20T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-07-20T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"Intro to Seldon Deployment CRD!","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html","headline":"Cluster Interaction Basics","datePublished":"2020-07-20T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/writing/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/writing/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Cluster Interaction Basics | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Cluster Interaction Basics" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Intro to Seldon Deployment CRD!" />
+<meta property="og:description" content="Intro to Seldon Deployment CRD!" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:image" content="https://ntorba.github.io/writing/images/chart-preview.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-20T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-07-20T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"Intro to Seldon Deployment CRD!","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html","headline":"Cluster Interaction Basics","datePublished":"2020-07-20T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    // remove paragraph tags in rendered toc (happens from notebooks)
+    var toctags = document.querySelectorAll(".toc-entry")
+    toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/writing/">Turbo</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/writing/about/">About</a><a class="page-link" href="/writing/search/">Search</a><a class="page-link" href="/writing/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Cluster Interaction Basics</h1><p class="page-description">Intro to Seldon Deployment CRD!</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-20T00:00:00-05:00" itemprop="datePublished">
+        Jul 20, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      2 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/writing/categories/#kubernetes">kubernetes</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/writing/categories/#docker">docker</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+<a href="https://github.com/ntorba/writing/tree/master/_notebooks/2020-07-20-intro-to-seldon-deployments.ipynb" role="button">
+    <img class="notebook-badge-image" src="/writing/assets/badges/github.svg" alt="View On GitHub">
+</a>
+</div><div class="px-2">
+    <a href="https://colab.research.google.com/github/ntorba/writing/blob/master/_notebooks/2020-07-20-intro-to-seldon-deployments.ipynb">
+        <img class="notebook-badge-image" src="/writing/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Intro">Intro </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Install-Seldon">Install Seldon </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-20-intro-to-seldon-deployments.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Intro">
+<a class="anchor" href="#Intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro<a class="anchor-link" href="#Intro"> </a>
+</h2>
+<p>In this post we will walk through the basics behind the seldon custom resource definition.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kind create cluster 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When working in kubernetes, I like to create a new namespace for that work. For those familiar with python, namespaces are similar to using virtual environments for different projects. Create a namespace with this command:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl create namespace seldon-intro
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then use kubens to set this as your current namespace:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubens seldon-intro
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Install-Seldon">
+<a class="anchor" href="#Install-Seldon" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Seldon<a class="anchor-link" href="#Install-Seldon"> </a>
+</h3>
+<p>I suggest using <a href="">helm</a> to install seldon. If you haven't used helm before, use <a href="https://helm.sh/">this page</a> to find install instructions. (If you're on a mac, just use <code>brew install helm</code>). For those familiar with python, helm is like the pip for kubernetes. It works by using <a href="https://helm.sh/docs/topics/charts/">helm charts</a>. A chart is a group of files that describe a higher level application using built-in kubernetes resources. For example, you could use a helm chart to deploy a web application. You can learn more about them <a href="https://helm.sh/docs/topics/charts/">here</a>.</p>
+<p>Once helm is installed and you have your kubernetes cluster up and running (refer to [part 1] of this series if you don't have a cluster running yet), use helm to install seldon-core and seldon-core-operator.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>helm install seldon-core seldon-core-operator <span class="err">\</span>
+    <span class="o">--</span><span class="n">repo</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">storage</span><span class="o">.</span><span class="n">googleapis</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">seldon</span><span class="o">-</span><span class="n">charts</span> \
+    <span class="o">--</span><span class="nb">set</span> <span class="n">usageMetrics</span><span class="o">.</span><span class="n">enabled</span><span class="o">=</span><span class="n">true</span> \
+    <span class="o">--</span><span class="nb">set</span> <span class="n">ambassador</span><span class="o">.</span><span class="n">enabled</span><span class="o">=</span><span class="n">true</span> \
+    <span class="o">--</span><span class="n">namespace</span> <span class="n">seldon</span><span class="o">-</span><span class="n">intro</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The docker image name used to create the seldon-controller-manager pod and deployment is called <code>docker.io/seldonio/seldon-core-operator:1.2.1</code>. After running the previous helm install, you will see the resource <code>seldon-controller-manager</code> created as a deployment, and a pod with that name included.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl get pods -o wide
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>NAME                                        READY   STATUS    RESTARTS   AGE   IP           NODE                 NOMINATED NODE   READINESS GATES
+seldon-controller-manager-769694875-gk4gl   1/1     Running   0          18m   10.244.0.5   kind-control-plane   &lt;none&gt;           &lt;none&gt;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl get deployments
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
+seldon-controller-manager   1/1     1            1           18m
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Seldon-controller-manager is a kubernetes operator. As described <a href="https://www.jaegertracing.io/docs/1.16/operator/">here</a>, kubernetes operators are extensions of the kubernetes api that allow users to easily package and deploy complex applications on kubernetes. As you will see throughout the rest of this series. The seldon-core-operator adds a lot of functionality to the kubernetes cluster and allows us to interact with seldon deployments as if they were a built-in kubernetes object.</p>
+<p>As described in the kubernetes docs <a href="https://kubernetes.io/docs/concepts/extend-kubernetes/operator/">here</a>, operators follow the controller pattern, which means they are responsible for keep the desired state of the custom resource they are responsible for. 
+The seldon-core-operator is responsbile for the Seldon Deployment custom resource. That means, when we create or edit a seldon deployment, the seldon-core-operator is responsible for adjusting the kubernetes deployment to the desired state to meet the new edits applied by the user.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>%%bash
+kubectl apply -f - <span class="s">&lt;&lt; END</span>
+<span class="s">apiVersion: machinelearning.seldon.io/v1alpha2</span>
+<span class="s">kind: SeldonDeployment</span>
+<span class="s">metadata:</span>
+<span class="s">  name: iris-model</span>
+<span class="s">spec:</span>
+<span class="s">  name: sklearn-iris-deployment</span>
+<span class="s">  predictors:</span>
+<span class="s">  - componentSpecs:</span>
+<span class="s">    - spec:</span>
+<span class="s">        containers:</span>
+<span class="s">        - image: seldonio/sklearn-iris:0.1</span>
+<span class="s">          imagePullPolicy: IfNotPresent</span>
+<span class="s">          name: sklearn-iris-classifier</span>
+<span class="s">    graph:</span>
+<span class="s">      children: []</span>
+<span class="s">      endpoint:</span>
+<span class="s">        type: REST</span>
+<span class="s">      name: sklearn-iris-classifier</span>
+<span class="s">      type: MODEL</span>
+<span class="s">    name: predictor</span>
+<span class="s">    replicas: 1</span>
+<span class="s">END</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>seldondeployment.machinelearning.seldon.io/iris-model configured
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl get pods
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>NAME                                                              READY   STATUS    RESTARTS   AGE
+iris-model-predictor-0-sklearn-iris-classifier-5f5b59678-8bpwk    0/2     Running   0          3s
+iris-model-sklearn-iris-predictor-0-sklearn-iris-classifie4l84z   0/2     Running   0          17s
+seldon-controller-manager-769694875-gk4gl                         1/1     Running   0          30m
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="ntorba/writing"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/writing/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/writing/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/writing/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Imma write some things here</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/ntorba" title="ntorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/nicktorba" title="nicktorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
