@@ -2,7 +2,9 @@
 toc: true
 layout: post
 comments: true
+title: Learning Kubernetes Through Seldon
 description: Table of Contents for series of posts
+sticky_rank: 1
 categories: [markdown, Torba, seldon, kubernetes, python] 
 ---
 # Intro 
