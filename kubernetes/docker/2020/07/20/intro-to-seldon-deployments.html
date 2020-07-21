@@ -3,12 +3,12 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Cluster Interaction Basics | Turbo</title>
+<title>Seldon Deployment CRD | Turbo</title>
 <meta name="generator" content="Jekyll v4.0.0" />
-<meta property="og:title" content="Cluster Interaction Basics" />
+<meta property="og:title" content="Seldon Deployment CRD" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Intro to Seldon Deployment CRD!" />
-<meta property="og:description" content="Intro to Seldon Deployment CRD!" />
+<meta name="description" content="Learn about kubernetes custom resources, operators, and controllers through the seldon-core custom resource" />
+<meta property="og:description" content="Learn about kubernetes custom resources, operators, and controllers through the seldon-core custom resource" />
 <link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html" />
 <meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html" />
 <meta property="og:site_name" content="Turbo" />
@@ -16,15 +16,15 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-07-20T00:00:00-05:00" />
 <script type="application/ld+json">
-{"dateModified":"2020-07-20T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"Intro to Seldon Deployment CRD!","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html","headline":"Cluster Interaction Basics","datePublished":"2020-07-20T00:00:00-05:00","@context":"https://schema.org"}</script>
+{"dateModified":"2020-07-20T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"Learn about kubernetes custom resources, operators, and controllers through the seldon-core custom resource","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html","headline":"Seldon Deployment CRD","datePublished":"2020-07-20T00:00:00-05:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/writing/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/writing/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Cluster Interaction Basics | Turbo</title>
+<title>Seldon Deployment CRD | Turbo</title>
 <meta name="generator" content="Jekyll v4.0.0" />
-<meta property="og:title" content="Cluster Interaction Basics" />
+<meta property="og:title" content="Seldon Deployment CRD" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Intro to Seldon Deployment CRD!" />
-<meta property="og:description" content="Intro to Seldon Deployment CRD!" />
+<meta name="description" content="Learn about kubernetes custom resources, operators, and controllers through the seldon-core custom resource" />
+<meta property="og:description" content="Learn about kubernetes custom resources, operators, and controllers through the seldon-core custom resource" />
 <link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html" />
 <meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html" />
 <meta property="og:site_name" content="Turbo" />
@@ -32,7 +32,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2020-07-20T00:00:00-05:00" />
 <script type="application/ld+json">
-{"dateModified":"2020-07-20T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"Intro to Seldon Deployment CRD!","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html","headline":"Cluster Interaction Basics","datePublished":"2020-07-20T00:00:00-05:00","@context":"https://schema.org"}</script>
+{"dateModified":"2020-07-20T00:00:00-05:00","image":"https://ntorba.github.io/writing/images/chart-preview.png","description":"Learn about kubernetes custom resources, operators, and controllers through the seldon-core custom resource","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/20/intro-to-seldon-deployments.html","headline":"Seldon Deployment CRD","datePublished":"2020-07-20T00:00:00-05:00","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
@@ -90,13 +90,13 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Cluster Interaction Basics</h1><p class="page-description">Intro to Seldon Deployment CRD!</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-20T00:00:00-05:00" itemprop="datePublished">
+    <h1 class="post-title p-name" itemprop="name headline">Seldon Deployment CRD</h1><p class="page-description">Learn about kubernetes custom resources, operators, and controllers through the seldon-core custom resource</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-20T00:00:00-05:00" itemprop="datePublished">
         Jul 20, 2020
       </time>
        • <span class="read-time" title="Estimated read time">
     
     
-      2 min read
+      5 min read
     
 </span></p>
 
@@ -129,11 +129,8 @@ window.onload = wrap_img;
 
   <div class="post-content e-content" itemprop="articleBody">
     <ul class="section-nav">
-<li class="toc-entry toc-h2"><a href="#Intro">Intro </a>
-<ul>
+<li class="toc-entry toc-h3"><a href="#Intro">Intro </a></li>
 <li class="toc-entry toc-h3"><a href="#Install-Seldon">Install Seldon </a></li>
-</ul>
-</li>
 </ul><!--
 #################################################
 ### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
@@ -153,10 +150,11 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Intro">
+<h3 id="Intro">
 <a class="anchor" href="#Intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro<a class="anchor-link" href="#Intro"> </a>
-</h2>
-<p>In this post we will walk through the basics behind the seldon custom resource definition.</p>
+</h3>
+<p>In this post we will walk through the basics behind the seldon custom resource definition. 
+To get started, let's get a cluster up and running. If you followed <a href="">part 1</a> of this series, you can do so with kind.</p>
 
 </div>
 </div>
@@ -234,8 +232,8 @@ window.onload = wrap_img;
 <h3 id="Install-Seldon">
 <a class="anchor" href="#Install-Seldon" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Seldon<a class="anchor-link" href="#Install-Seldon"> </a>
 </h3>
-<p>I suggest using <a href="">helm</a> to install seldon. If you haven't used helm before, use <a href="https://helm.sh/">this page</a> to find install instructions. (If you're on a mac, just use <code>brew install helm</code>). For those familiar with python, helm is like the pip for kubernetes. It works by using <a href="https://helm.sh/docs/topics/charts/">helm charts</a>. A chart is a group of files that describe a higher level application using built-in kubernetes resources. For example, you could use a helm chart to deploy a web application. You can learn more about them <a href="https://helm.sh/docs/topics/charts/">here</a>.</p>
-<p>Once helm is installed and you have your kubernetes cluster up and running (refer to [part 1] of this series if you don't have a cluster running yet), use helm to install seldon-core and seldon-core-operator.</p>
+<p>I suggest using <code>helm</code> to install seldon. If you haven't used helm before, use <a href="https://helm.sh/">this page</a> to find install instructions. (If you're on a mac, just use <code>brew install helm</code>). For those familiar with python, helm is like the pip for kubernetes. It works by using <a href="https://helm.sh/docs/topics/charts/">helm charts</a>. A chart is a group of files that describe a higher level application using built-in kubernetes resources. For example, you could use a helm chart to deploy a full stack web application. You can learn more about them <a href="https://helm.sh/docs/topics/charts/">here</a>.</p>
+<p>Once helm is installed, use it to install seldon-core and seldon-core-operator with the following command:</p>
 
 </div>
 </div>
@@ -261,10 +259,29 @@ window.onload = wrap_img;
 </div>
     
 
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl get deployments
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The docker image name used to create the seldon-controller-manager pod and deployment is called <code>docker.io/seldonio/seldon-core-operator:1.2.1</code>. After running the previous helm install, you will see the resource <code>seldon-controller-manager</code> created as a deployment, and a pod with that name included.</p>
+<p>The docker image name used to create the seldon-controller-manager pod and deployment is called <code>docker.io/seldonio/seldon-core-operator:1.2.1</code>. That is because the seldon-controller-manager is the seldon-core-operator.</p>
+<p>Be sure to match the last line with the namespace you created in the previous command. We will talk more about what the other lines mean later in the series. 
+After installing, run</p>
 
 </div>
 </div>
@@ -301,6 +318,14 @@ seldon-controller-manager-769694875-gk4gl   1/1     Running   0          18m   1
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and you'll see you have a pod running with seldon-controller-manager in the name (followed by a random string, we will talk about why that is soon). Next, run</p>
+
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -336,9 +361,24 @@ seldon-controller-manager   1/1     1            1           18m
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Seldon-controller-manager is a kubernetes operator. As described <a href="https://www.jaegertracing.io/docs/1.16/operator/">here</a>, kubernetes operators are extensions of the kubernetes api that allow users to easily package and deploy complex applications on kubernetes. As you will see throughout the rest of this series. The seldon-core-operator adds a lot of functionality to the kubernetes cluster and allows us to interact with seldon deployments as if they were a built-in kubernetes object.</p>
+<p>Seldon-controller-manager is a kubernetes operator. As described <a href="https://www.jaegertracing.io/docs/1.16/operator/">here</a>, kubernetes operators are extensions of the kubernetes api that allow users to easily package and deploy complex applications on kubernetes. The seldon-core-operator adds a lot of functionality to the kubernetes cluster and allows us to interact with seldon deployments as if they were a built-in kubernetes object. Along with this, we also installed the seldon-core custom resource definition. Kubernetes custom resources are extensions of the native kuberetes api. As you will see soon, we will now be able to deploy and interact with a new structure, the <code>sdep</code>, in the same fashion we deploy and monitor kubernetes deployments, servives, and other built-in resources.</p>
+<p>All interactions with a kubernetes cluster is the user specifying a new desired state, and the kubernetes cluster using it's resources to change into that desired state. When, a custom resource is created, an operator is needed as well to tell kubernetes how to handle updates to the desired state of the custom resource. 
+The seldon-core operator is what allows users to make edits to currently running seldon deployments without downtime.</p>
+<p>Operators allows kubernetes to run stateful applications. A popular usecase for operators is databases.</p>
+<p>In <a href="https://enterprisersproject.com/article/2019/2/kubernetes-operators-plain-english?page=1">this post</a>, they write</p>
+
+<pre><code>If you had to sum up Kubernetes in a word, the best choice might not be “orchestration” but “automation.” That’s what it’s all about: Kubernetes enables the automation of the infrastructure (and corresponding operational burden of managing that infrastructure) necessary for running containerized applications – a must when running these apps at scale in production environments.</code></pre>
+<p>This is very evident with the Seldon deployment CRD and operator. As we move along and start to create our own seldon deployments, you will see the power of this automation. With a single file, a seldon deployment will launch multiple services, deployments, pods, and allow for continuous updates of all those components through the Kubernetes api. Seldon has leveraged the power of the automation offered by kubernetes to create inferences graphs of many components.</p>
+<p>Another great quote from that article:</p>
+
+<pre><code>“Operators are simplifying the process highly complex distributed database management by defining the installation, scale, updates, and management lifecycle of a stateful clustered application,” says Yossi Jana, DevOps team leader at AllCloud.
+
+From another vantage point, consider life without Operators.
+
+“Without Operators, many applications need intervention to deploy, scale, reconfigure, upgrade, or recover from faults,” Thompson says. “If your app – or apps that you depend on, such as your database management system – [requires] DevOps engineers hovering over a keyboard in these critical moments, hoping they get the steps correctly, you’re almost certain to have greater downtime and more stress in your team.”</code></pre>
 <p>As described in the kubernetes docs <a href="https://kubernetes.io/docs/concepts/extend-kubernetes/operator/">here</a>, operators follow the controller pattern, which means they are responsible for keep the desired state of the custom resource they are responsible for. 
 The seldon-core-operator is responsbile for the Seldon Deployment custom resource. That means, when we create or edit a seldon deployment, the seldon-core-operator is responsible for adjusting the kubernetes deployment to the desired state to meet the new edits applied by the user.</p>
+<p>In every article you read about kubernetes operators, you'll find some sentiment to the fact that is confusing the first time around. In fact, pretty much everything you learn about kubernetes will be confusing the first time around. Don't let that discourage you. That is why we are using seldon to help our understanding. Instead of reading description after description of what a custom resource and operator are, let's actually use them to begin to understand the power they provide.</p>
 
 </div>
 </div>
