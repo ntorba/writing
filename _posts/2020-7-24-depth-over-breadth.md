@@ -4,7 +4,7 @@ layout: post
 comments: true
 title: Depth over Breadth
 description: Counterintuitive learning strategy
-categories: [markdown, Torba, learning, learning strategies, growth] 
+categories: [markdown, learning, learning strategies, growth] 
 ---
 This is an idea I first explicitly learned about while listening to [The Art of Learning](https://www.amazon.com/gp/product/0140230386/ref=as_li_qf_sp_asin_il_tl?imprToken=8S8HjpFN5qUYGel0nDft0A&slotNum=1&ie=UTF8&camp=1789&creative=9325&creativeASIN=0140230386&linkCode=w61&tag=farnamstreet-20) by Josh Waitzkin. 
 The main idea is that you can gain a much better understanding of the bigger picture (any object or field of study) by digging deep on a seemingly small part. For example, as a software engineer, depth over breadth would be dedicating your time to a single programming language instead of trying to learn 3 at once. A deep understanding of a single language improves your general programming ability more than a shallow understanding of many. Not to mention, learning new languages after a deep understanding of one opens the door to many important, nuanced connections. 

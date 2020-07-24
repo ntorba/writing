@@ -5,7 +5,7 @@ comments: true
 title: Learning Kubernetes Through Seldon
 description: Table of Contents for series of posts
 sticky_rank: 1
-categories: [markdown, Torba, seldon, kubernetes, python] 
+categories: [markdown, seldon, kubernetes, python] 
 ---
 # Intro 
 I recently started working with with the [seldon-core](https://docs.seldon.io/projects/seldon-core/en/v1.1.0/) project. I am working on a team now that is developing an ML platform to allower researchers to quickly serve and monitor ML models at scale. Seldon-core is a fantastic tool to build on top of for this project. Seldon-core deploys models at scale by leveraging kubernetes. The only problem was, I had never used kubernetes before. 
