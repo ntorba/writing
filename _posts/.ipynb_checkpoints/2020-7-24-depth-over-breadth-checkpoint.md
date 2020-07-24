@@ -3,7 +3,7 @@ toc: false
 layout: post
 comments: true
 title: Depth over Breadth
-description: Table of Contents for series of posts
+description: Counterintuitive learning strategy
 categories: [markdown, Torba, learning, learning strategies, growth] 
 ---
 # Depth over Breadth 
