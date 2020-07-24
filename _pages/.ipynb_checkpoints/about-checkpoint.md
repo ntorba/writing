@@ -4,6 +4,6 @@ title: About
 permalink: /about/
 ---
 
-## About Us
-Just out here tryna write cuz it seems like it's a good thing to get good at.
+## About Me
+Trying to get better at writing because it seems like a good thing to get good at. 
 
