@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Exploring Kubernetes API | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Exploring Kubernetes API" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Explore the Kubernetes Rest API" />
+<meta property="og:description" content="Explore the Kubernetes Rest API" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/api/2020/07/27/exploring-kubernetes-api.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/api/2020/07/27/exploring-kubernetes-api.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-07-27T00:00:00-05:00","description":"Explore the Kubernetes Rest API","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/api/2020/07/27/exploring-kubernetes-api.html"},"url":"https://ntorba.github.io/writing/kubernetes/api/2020/07/27/exploring-kubernetes-api.html","headline":"Exploring Kubernetes API","datePublished":"2020-07-27T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/writing/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/writing/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Exploring Kubernetes API | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Exploring Kubernetes API" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Explore the Kubernetes Rest API" />
+<meta property="og:description" content="Explore the Kubernetes Rest API" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/api/2020/07/27/exploring-kubernetes-api.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/api/2020/07/27/exploring-kubernetes-api.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-07-27T00:00:00-05:00","description":"Explore the Kubernetes Rest API","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/api/2020/07/27/exploring-kubernetes-api.html"},"url":"https://ntorba.github.io/writing/kubernetes/api/2020/07/27/exploring-kubernetes-api.html","headline":"Exploring Kubernetes API","datePublished":"2020-07-27T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    // remove paragraph tags in rendered toc (happens from notebooks)
+    var toctags = document.querySelectorAll(".toc-entry")
+    toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/writing/">Turbo</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/writing/about/">About</a><a class="page-link" href="/writing/search/">Search</a><a class="page-link" href="/writing/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Exploring Kubernetes API</h1><p class="page-description">Explore the Kubernetes Rest API</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-27T00:00:00-05:00" itemprop="datePublished">
+        Jul 27, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/writing/categories/#kubernetes">kubernetes</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/writing/categories/#api">api</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+<a href="https://github.com/ntorba/writing/tree/master/_notebooks/2020-07-27-exploring-kubernetes-api.ipynb" role="button">
+    <img class="notebook-badge-image" src="/writing/assets/badges/github.svg" alt="View On GitHub">
+</a>
+</div><div class="px-2">
+    <a href="https://colab.research.google.com/github/ntorba/writing/blob/master/_notebooks/2020-07-27-exploring-kubernetes-api.ipynb">
+        <img class="notebook-badge-image" src="/writing/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Kubernets-API">Kubernets API </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-27-exploring-kubernetes-api.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Kubernets-API">
+<a class="anchor" href="#Kubernets-API" aria-hidden="true"><span class="octicon octicon-link"></span></a>Kubernets API<a class="anchor-link" href="#Kubernets-API"> </a>
+</h2>
+<p>The <a href="https://kubernetes.io/docs/concepts/overview/kubernetes-api/">Kubernetes api</a> is how all communication is passed to and within a kubernetes cluster. Any commands sent to kubernetes cluster with <code>kubectl</code> are hitting endpoints in the kubernetes cluster, which allow the cluster to make the appropriate changes.</p>
+<p>Luckly for us, kubernetes makes it easy to explore the api through the use of <code>kubectl proxy</code>. In this post we will look through the different paths of the api to see how different functionalites are exposed</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kind create cluster --name explore
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Creating cluster "explore" ...
+ <span class="ansi-green-fg">✓</span> Ensuring node image (kindest/node:v1.17.0) 🖼
+ <span class="ansi-green-fg">✓</span> Preparing nodes 📦 7l
+ <span class="ansi-green-fg">✓</span> Writing configuration 📜7l
+ <span class="ansi-green-fg">✓</span> Starting control-plane 🕹️7l
+ <span class="ansi-green-fg">✓</span> Installing CNI 🔌7l
+ <span class="ansi-green-fg">✓</span> Installing StorageClass 💾7l
+Set kubectl context to "kind-explore"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-explore
+
+Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/#community 🙂
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectx kind-explore
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Switched to context "kind-explore".
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl get pods
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>No resources found in default namespace.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With a new cluster up and running, go to a terminal, and end the command
+<code>kubectl proxy --port=8000</code> (if port 8000 is taken, use a different number). 
+You will want to run this command in a terminal because the server itself will need be running while we continue to execute commands from this notebook or your webrowser.</p>
+<p><a href="https://kubernetes.io/docs/tasks/extend-kubernetes/http-proxy-access-api/">Kubectl proxy</a> is a built-in kubernetes command that exposes the kubernetes api to the user. With a kubectl proxy server running locally, we can visit the different api paths to see information about what api endpoints are available.</p>
+<p>To start exploring the kubernetes api, either go to <code>http://127.0.0.1:8000/apis</code> in your browser, or use a curl in this notebook:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>curl http://127.0.0.1:8000/apis
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{
+  "kind": "APIGroupList",
+  "apiVersion": "v1",
+  "groups": [
+    {
+      "name": "apiregistration.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "apiregistration.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "apiregistration.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "apiregistration.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "extensions",
+      "versions": [
+        {
+          "groupVersion": "extensions/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "extensions/v1beta1",
+        "version": "v1beta1"
+      }
+    },
+    {
+      "name": "apps",
+      "versions": [
+        {
+          "groupVersion": "apps/v1",
+          "version": "v1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "apps/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "events.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "events.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "events.k8s.io/v1beta1",
+        "version": "v1beta1"
+      }
+    },
+    {
+      "name": "authentication.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "authentication.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "authentication.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "authentication.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "authorization.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "authorization.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "authorization.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "authorization.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "autoscaling",
+      "versions": [
+        {
+          "groupVersion": "autoscaling/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "autoscaling/v2beta1",
+          "version": "v2beta1"
+        },
+        {
+          "groupVersion": "autoscaling/v2beta2",
+          "version": "v2beta2"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "autoscaling/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "batch",
+      "versions": [
+        {
+          "groupVersion": "batch/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "batch/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "batch/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "certificates.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "certificates.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "certificates.k8s.io/v1beta1",
+        "version": "v1beta1"
+      }
+    },
+    {
+      "name": "networking.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "networking.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "networking.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "networking.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "policy",
+      "versions": [
+        {
+          "groupVersion": "policy/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "policy/v1beta1",
+        "version": "v1beta1"
+      }
+    },
+    {
+      "name": "rbac.authorization.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "rbac.authorization.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "rbac.authorization.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "rbac.authorization.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "storage.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "storage.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "storage.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "storage.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "admissionregistration.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "admissionregistration.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "admissionregistration.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "admissionregistration.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "apiextensions.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "apiextensions.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "apiextensions.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "apiextensions.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "scheduling.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "scheduling.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "scheduling.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "scheduling.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "coordination.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "coordination.k8s.io/v1",
+          "version": "v1"
+        },
+        {
+          "groupVersion": "coordination.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "coordination.k8s.io/v1",
+        "version": "v1"
+      }
+    },
+    {
+      "name": "node.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "node.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "node.k8s.io/v1beta1",
+        "version": "v1beta1"
+      }
+    },
+    {
+      "name": "discovery.k8s.io",
+      "versions": [
+        {
+          "groupVersion": "discovery.k8s.io/v1beta1",
+          "version": "v1beta1"
+        }
+      ],
+      "preferredVersion": {
+        "groupVersion": "discovery.k8s.io/v1beta1",
+        "version": "v1beta1"
+      }
+    }
+  ]
+}</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You'll see a big json reponse of kind <code>APIGroupList</code>. This response shows a list of kubernets APIGroups, which are a mechanism kubernetes uses to make it easier for users to extend the kubernetes api (We will see how the seldon custom resource definition extends this api by the end of this post!)</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl create namespace tester
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>namespace/tester created
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubens tester
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Context "kind-explore" modified.
+Active namespace is "tester".
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>curl http://127.0.0.1:8000/api/v1
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{
+  "kind": "APIResourceList",
+  "groupVersion": "v1",
+  "resources": [
+    {
+      "name": "bindings",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Binding",
+      "verbs": [
+        "create"
+      ]
+    },
+    {
+      "name": "componentstatuses",
+      "singularName": "",
+      "namespaced": false,
+      "kind": "ComponentStatus",
+      "verbs": [
+        "get",
+        "list"
+      ],
+      "shortNames": [
+        "cs"
+      ]
+    },
+    {
+      "name": "configmaps",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "ConfigMap",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "cm"
+      ],
+      "storageVersionHash": "qFsyl6wFWjQ="
+    },
+    {
+      "name": "endpoints",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Endpoints",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "ep"
+      ],
+      "storageVersionHash": "fWeeMqaN/OA="
+    },
+    {
+      "name": "events",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Event",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "ev"
+      ],
+      "storageVersionHash": "r2yiGXH7wu8="
+    },
+    {
+      "name": "limitranges",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "LimitRange",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "limits"
+      ],
+      "storageVersionHash": "EBKMFVe6cwo="
+    },
+    {
+      "name": "namespaces",
+      "singularName": "",
+      "namespaced": false,
+      "kind": "Namespace",
+      "verbs": [
+        "create",
+        "delete",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "ns"
+      ],
+      "storageVersionHash": "Q3oi5N2YM8M="
+    },
+    {
+      "name": "namespaces/finalize",
+      "singularName": "",
+      "namespaced": false,
+      "kind": "Namespace",
+      "verbs": [
+        "update"
+      ]
+    },
+    {
+      "name": "namespaces/status",
+      "singularName": "",
+      "namespaced": false,
+      "kind": "Namespace",
+      "verbs": [
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "nodes",
+      "singularName": "",
+      "namespaced": false,
+      "kind": "Node",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "no"
+      ],
+      "storageVersionHash": "XwShjMxG9Fs="
+    },
+    {
+      "name": "nodes/proxy",
+      "singularName": "",
+      "namespaced": false,
+      "kind": "NodeProxyOptions",
+      "verbs": [
+        "create",
+        "delete",
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "nodes/status",
+      "singularName": "",
+      "namespaced": false,
+      "kind": "Node",
+      "verbs": [
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "persistentvolumeclaims",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "PersistentVolumeClaim",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "pvc"
+      ],
+      "storageVersionHash": "QWTyNDq0dC4="
+    },
+    {
+      "name": "persistentvolumeclaims/status",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "PersistentVolumeClaim",
+      "verbs": [
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "persistentvolumes",
+      "singularName": "",
+      "namespaced": false,
+      "kind": "PersistentVolume",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "pv"
+      ],
+      "storageVersionHash": "HN/zwEC+JgM="
+    },
+    {
+      "name": "persistentvolumes/status",
+      "singularName": "",
+      "namespaced": false,
+      "kind": "PersistentVolume",
+      "verbs": [
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "pods",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Pod",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "po"
+      ],
+      "categories": [
+        "all"
+      ],
+      "storageVersionHash": "xPOwRZ+Yhw8="
+    },
+    {
+      "name": "pods/attach",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "PodAttachOptions",
+      "verbs": [
+        "create",
+        "get"
+      ]
+    },
+    {
+      "name": "pods/binding",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Binding",
+      "verbs": [
+        "create"
+      ]
+    },
+    {
+      "name": "pods/eviction",
+      "singularName": "",
+      "namespaced": true,
+      "group": "policy",
+      "version": "v1beta1",
+      "kind": "Eviction",
+      "verbs": [
+        "create"
+      ]
+    },
+    {
+      "name": "pods/exec",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "PodExecOptions",
+      "verbs": [
+        "create",
+        "get"
+      ]
+    },
+    {
+      "name": "pods/log",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Pod",
+      "verbs": [
+        "get"
+      ]
+    },
+    {
+      "name": "pods/portforward",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "PodPortForwardOptions",
+      "verbs": [
+        "create",
+        "get"
+      ]
+    },
+    {
+      "name": "pods/proxy",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "PodProxyOptions",
+      "verbs": [
+        "create",
+        "delete",
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "pods/status",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Pod",
+      "verbs": [
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "podtemplates",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "PodTemplate",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "storageVersionHash": "LIXB2x4IFpk="
+    },
+    {
+      "name": "replicationcontrollers",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "ReplicationController",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "rc"
+      ],
+      "categories": [
+        "all"
+      ],
+      "storageVersionHash": "Jond2If31h0="
+    },
+    {
+      "name": "replicationcontrollers/scale",
+      "singularName": "",
+      "namespaced": true,
+      "group": "autoscaling",
+      "version": "v1",
+      "kind": "Scale",
+      "verbs": [
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "replicationcontrollers/status",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "ReplicationController",
+      "verbs": [
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "resourcequotas",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "ResourceQuota",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "quota"
+      ],
+      "storageVersionHash": "8uhSgffRX6w="
+    },
+    {
+      "name": "resourcequotas/status",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "ResourceQuota",
+      "verbs": [
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "secrets",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Secret",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "storageVersionHash": "S6u1pOWzb84="
+    },
+    {
+      "name": "serviceaccounts",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "ServiceAccount",
+      "verbs": [
+        "create",
+        "delete",
+        "deletecollection",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "sa"
+      ],
+      "storageVersionHash": "pbx9ZvyFpBE="
+    },
+    {
+      "name": "services",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Service",
+      "verbs": [
+        "create",
+        "delete",
+        "get",
+        "list",
+        "patch",
+        "update",
+        "watch"
+      ],
+      "shortNames": [
+        "svc"
+      ],
+      "categories": [
+        "all"
+      ],
+      "storageVersionHash": "0/CO1lhkEBI="
+    },
+    {
+      "name": "services/proxy",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "ServiceProxyOptions",
+      "verbs": [
+        "create",
+        "delete",
+        "get",
+        "patch",
+        "update"
+      ]
+    },
+    {
+      "name": "services/status",
+      "singularName": "",
+      "namespaced": true,
+      "kind": "Service",
+      "verbs": [
+        "get",
+        "patch",
+        "update"
+      ]
+    }
+  ]
+}</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="ntorba/writing"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/writing/kubernetes/api/2020/07/27/exploring-kubernetes-api.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/writing/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/writing/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/writing/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Imma write some things here</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/ntorba" title="ntorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/nicktorba" title="nicktorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

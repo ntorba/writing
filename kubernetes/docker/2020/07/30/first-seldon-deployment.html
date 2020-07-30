@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Launch a Seldon Deployment | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Launch a Seldon Deployment" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Get an ML endpoint up and running on your cluster!" />
+<meta property="og:description" content="Get an ML endpoint up and running on your cluster!" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-30T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-07-30T00:00:00-05:00","description":"Get an ML endpoint up and running on your cluster!","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html","headline":"Launch a Seldon Deployment","datePublished":"2020-07-30T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/writing/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/writing/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Launch a Seldon Deployment | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Launch a Seldon Deployment" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Get an ML endpoint up and running on your cluster!" />
+<meta property="og:description" content="Get an ML endpoint up and running on your cluster!" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-07-30T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-07-30T00:00:00-05:00","description":"Get an ML endpoint up and running on your cluster!","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html","headline":"Launch a Seldon Deployment","datePublished":"2020-07-30T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    // remove paragraph tags in rendered toc (happens from notebooks)
+    var toctags = document.querySelectorAll(".toc-entry")
+    toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/writing/">Turbo</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/writing/about/">About</a><a class="page-link" href="/writing/search/">Search</a><a class="page-link" href="/writing/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Launch a Seldon Deployment</h1><p class="page-description">Get an ML endpoint up and running on your cluster!</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-07-30T00:00:00-05:00" itemprop="datePublished">
+        Jul 30, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/writing/categories/#kubernetes">kubernetes</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/writing/categories/#docker">docker</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+<a href="https://github.com/ntorba/writing/tree/master/_notebooks/2020-07-30-first-seldon-deployment.ipynb" role="button">
+    <img class="notebook-badge-image" src="/writing/assets/badges/github.svg" alt="View On GitHub">
+</a>
+</div><div class="px-2">
+    <a href="https://colab.research.google.com/github/ntorba/writing/blob/master/_notebooks/2020-07-30-first-seldon-deployment.ipynb">
+        <img class="notebook-badge-image" src="/writing/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h3"><a href="#Intro">Intro </a></li>
+<li class="toc-entry toc-h3"><a href="#Launch-cluster">Launch cluster </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Install-seldon-core">Install seldon-core </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Build-example">Build example </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-07-30-first-seldon-deployment.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Intro">
+<a class="anchor" href="#Intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro<a class="anchor-link" href="#Intro"> </a>
+</h3>
+<p>In this post, we will walkthrough the first steps towards launching your own seldon deployment!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Launch-cluster">
+<a class="anchor" href="#Launch-cluster" aria-hidden="true"><span class="octicon octicon-link"></span></a>Launch cluster<a class="anchor-link" href="#Launch-cluster"> </a>
+</h3>
+<p>To get started, let's get a cluster up and running. If you followed <a href="">part 1</a> of this series, you can do so with kind. 
+Below, I create a cluster, create a namespace called seldon-intro, then use <code>kubens</code> to make seldon-into my default namespace (so I don't have to include it in every command).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kind create cluster 
+<span class="o">!</span>kubectl create namespace seldon-intro
+<span class="o">!</span>kubens seldon-intro
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Install-seldon-core">
+<a class="anchor" href="#Install-seldon-core" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install seldon-core<a class="anchor-link" href="#Install-seldon-core"> </a>
+</h4>
+<p>To install seldon-core on the cluster, use helm. To install helm itself, find directions <a href="https://helm.sh/">here</a>, or use <code>brew install helm</code> on mac.</p>
+<p>Once helm is installed, use it to install seldon-core and seldon-core-operator with the following command:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>helm install seldon-core seldon-core-operator <span class="err">\</span>
+    <span class="o">--</span><span class="n">repo</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">storage</span><span class="o">.</span><span class="n">googleapis</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">seldon</span><span class="o">-</span><span class="n">charts</span> \
+    <span class="o">--</span><span class="nb">set</span> <span class="n">usageMetrics</span><span class="o">.</span><span class="n">enabled</span><span class="o">=</span><span class="n">true</span> \
+    <span class="o">--</span><span class="nb">set</span> <span class="n">ambassador</span><span class="o">.</span><span class="n">enabled</span><span class="o">=</span><span class="n">true</span> \
+    <span class="o">--</span><span class="n">namespace</span> <span class="n">seldon</span><span class="o">-</span><span class="n">intro</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To check the install is running correctly, run the following command:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl get deployments, pods
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You should see a pod and deployment with <code>seldon-controller-manager</code> in the name. This pod and deployment house the seldon-core operator, which is an extensions to to the kubernetes api that allows us to deploy seldon inference graphs later on. We don't need to worry much about these details for now.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Build-example">
+<a class="anchor" href="#Build-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build example<a class="anchor-link" href="#Build-example"> </a>
+</h3>
+<p>I'm taking this example code directly from <a href="https://github.com/SeldonIO/seldon-core/blob/master/examples/models/sklearn_iris/sklearn_iris.ipynb">seldon-core irisClassifier example</a>. 
+This is a classic sklearn example we will be able to get up quick.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>mkdir iris_classifier
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>mkdir: iris_classifier: File exists
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%writefile</span> iris_classifier/train_iris.py
+<span class="kn">import</span> <span class="nn">joblib</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span>
+
+
+<span class="n">OUTPUT_FILE</span> <span class="o">=</span> <span class="s2">"iris_classifier/IrisClassifier.sav"</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">clf</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="s2">"liblinear"</span><span class="p">,</span> <span class="n">multi_class</span><span class="o">=</span><span class="s2">"ovr"</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">"clf"</span><span class="p">,</span> <span class="n">clf</span><span class="p">)])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Training model..."</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Model trained!"</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Saving model in </span><span class="si">{</span><span class="n">OUTPUT_FILE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">OUTPUT_FILE</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Model saved!"</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Loading iris data set..."</span><span class="p">)</span>
+    <span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Dataset loaded!"</span><span class="p">)</span>
+
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Writing iris_classifier/train_iris.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>python iris_classifier/train_iris.py
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Loading iris data set...
+Dataset loaded!
+Training model...
+Model trained!
+Saving model in IrisClassifier.sav
+Model saved!
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%writefile</span> iris_classifier/IrisClassifier.py
+<span class="kn">import</span> <span class="nn">joblib</span>
+
+<span class="k">class</span> <span class="nc">IrisClassifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'IrisClassifier.sav'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">features_names</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Writing iris_classifier/IrisClassifier.py
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I'm going to slightly differ from their example, and use a Dockerfile to create the docker image for this component instead of s2i. Feel free to use s2i directly from their example instead!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%writefile</span> iris_classifier/requirements.txt
+<span class="n">sklearn</span>
+<span class="n">seldon</span><span class="o">-</span><span class="n">core</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Writing iris_classifier/requirements.txt
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%writefile</span> iris_classifier/Dockerfile
+<span class="n">FROM</span> <span class="n">python</span><span class="p">:</span><span class="mf">3.7</span><span class="o">-</span><span class="n">slim</span>
+<span class="n">COPY</span> <span class="o">.</span> <span class="o">/</span><span class="n">app</span>
+<span class="n">WORKDIR</span> <span class="o">/</span><span class="n">app</span>
+<span class="n">RUN</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">EXPOSE</span> <span class="mi">5000</span>
+
+<span class="c1"># Define environment variable</span>
+<span class="n">ENV</span> <span class="n">MODEL_NAME</span> <span class="n">IrisClassifier</span> 
+<span class="n">ENV</span> <span class="n">API_TYPE</span> <span class="n">REST</span>
+<span class="n">ENV</span> <span class="n">SERVICE_TYPE</span> <span class="n">MODEL</span> 
+<span class="n">ENV</span> <span class="n">PERSISTENCE</span> <span class="mi">0</span>
+
+<span class="c1"># seldon-core-microservice is a command line tool installed with the seldon-core python libray. You can use this locally as well!</span>
+<span class="n">CMD</span> <span class="n">exec</span> <span class="n">seldon</span><span class="o">-</span><span class="n">core</span><span class="o">-</span><span class="n">microservice</span> <span class="err">$</span><span class="n">MODEL_NAME</span> <span class="err">$</span><span class="n">API_TYPE</span> <span class="o">--</span><span class="n">service</span><span class="o">-</span><span class="nb">type</span> <span class="err">$</span><span class="n">SERVICE_TYPE</span> <span class="o">--</span><span class="n">persistence</span> <span class="err">$</span><span class="n">PERSISTENCE</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Overwriting iris_classifier/Dockerfile
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To test this example, let's build and run the docker image!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>docker build iris_classifier/ -t localhost:5000/iris_ex:latest
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Sending build context to Docker daemon  7.168kB
+Step 1/10 : FROM python:3.7-slim
+ ---&gt; b386e7420fc3
+Step 2/10 : COPY . /app
+ ---&gt; e89dd689e61c
+Step 3/10 : WORKDIR /app
+ ---&gt; Running in 293fb2fc0432
+Removing intermediate container 293fb2fc0432
+ ---&gt; 1815d73b62c4
+Step 4/10 : RUN pip install -r requirements.txt
+ ---&gt; Running in 611c0926cddc
+Collecting sklearn
+  Downloading sklearn-0.0.tar.gz (1.1 kB)
+Collecting seldon-core
+  Downloading seldon_core-1.2.2-py3-none-any.whl (108 kB)
+Collecting scikit-learn
+  Downloading scikit_learn-0.23.1-cp37-cp37m-manylinux1_x86_64.whl (6.8 MB)
+Collecting gunicorn&lt;20.1.0,&gt;=19.9.0
+  Downloading gunicorn-20.0.4-py2.py3-none-any.whl (77 kB)
+Collecting jaeger-client&lt;4.4.0,&gt;=4.1.0
+  Downloading jaeger-client-4.3.0.tar.gz (81 kB)
+Requirement already satisfied: setuptools&gt;=41.0.0 in /usr/local/lib/python3.7/site-packages (from seldon-core-&gt;-r requirements.txt (line 2)) (47.3.1)
+Collecting numpy&lt;2.0.0
+  Downloading numpy-1.19.1-cp37-cp37m-manylinux2010_x86_64.whl (14.5 MB)
+Collecting minio&lt;6.0.0,&gt;=4.0.9
+  Downloading minio-5.0.10-py2.py3-none-any.whl (75 kB)
+Collecting prometheus-client&lt;0.9.0,&gt;=0.7.1
+  Downloading prometheus_client-0.8.0-py2.py3-none-any.whl (53 kB)
+Collecting requests&lt;3.0.0
+  Downloading requests-2.24.0-py2.py3-none-any.whl (61 kB)
+Collecting jsonschema&lt;4.0.0
+  Downloading jsonschema-3.2.0-py2.py3-none-any.whl (56 kB)
+Collecting Flask&lt;2.0.0
+  Downloading Flask-1.1.2-py2.py3-none-any.whl (94 kB)
+Collecting redis&lt;4.0.0
+  Downloading redis-3.5.3-py2.py3-none-any.whl (72 kB)
+Collecting Flask-cors&lt;4.0.0
+  Downloading Flask_Cors-3.0.8-py2.py3-none-any.whl (14 kB)
+Collecting protobuf&lt;4.0.0
+  Downloading protobuf-3.12.4-cp37-cp37m-manylinux1_x86_64.whl (1.3 MB)
+Collecting opentracing&lt;2.4.0,&gt;=2.2.0
+  Downloading opentracing-2.3.0.tar.gz (48 kB)
+Collecting Flask-OpenTracing&lt;1.2.0,&gt;=1.1.0
+  Downloading Flask-OpenTracing-1.1.0.tar.gz (8.2 kB)
+Collecting grpcio&lt;2.0.0
+  Downloading grpcio-1.30.0-cp37-cp37m-manylinux2010_x86_64.whl (3.0 MB)
+Collecting flatbuffers&lt;2.0.0
+  Downloading flatbuffers-1.12-py2.py3-none-any.whl (15 kB)
+Collecting PyYAML&lt;5.4
+  Downloading PyYAML-5.3.1.tar.gz (269 kB)
+Collecting grpcio-opentracing&lt;1.2.0,&gt;=1.1.4
+  Downloading grpcio_opentracing-1.1.4-py3-none-any.whl (14 kB)
+Collecting scipy&gt;=0.19.1
+  Downloading scipy-1.5.2-cp37-cp37m-manylinux1_x86_64.whl (25.9 MB)
+Collecting joblib&gt;=0.11
+  Downloading joblib-0.16.0-py3-none-any.whl (300 kB)
+Collecting threadpoolctl&gt;=2.0.0
+  Downloading threadpoolctl-2.1.0-py3-none-any.whl (12 kB)
+Collecting threadloop&lt;2,&gt;=1
+  Downloading threadloop-1.0.2.tar.gz (4.9 kB)
+Collecting thrift
+  Downloading thrift-0.13.0.tar.gz (59 kB)
+Collecting tornado&gt;=4.3
+  Downloading tornado-6.0.4.tar.gz (496 kB)
+Collecting certifi
+  Downloading certifi-2020.6.20-py2.py3-none-any.whl (156 kB)
+Collecting urllib3
+  Downloading urllib3-1.25.10-py2.py3-none-any.whl (127 kB)
+Collecting pytz
+  Downloading pytz-2020.1-py2.py3-none-any.whl (510 kB)
+Collecting configparser
+  Downloading configparser-5.0.0-py3-none-any.whl (22 kB)
+Collecting python-dateutil
+  Downloading python_dateutil-2.8.1-py2.py3-none-any.whl (227 kB)
+Collecting idna&lt;3,&gt;=2.5
+  Downloading idna-2.10-py2.py3-none-any.whl (58 kB)
+Collecting chardet&lt;4,&gt;=3.0.2
+  Downloading chardet-3.0.4-py2.py3-none-any.whl (133 kB)
+Collecting attrs&gt;=17.4.0
+  Downloading attrs-19.3.0-py2.py3-none-any.whl (39 kB)
+Collecting six&gt;=1.11.0
+  Downloading six-1.15.0-py2.py3-none-any.whl (10 kB)
+Collecting pyrsistent&gt;=0.14.0
+  Downloading pyrsistent-0.16.0.tar.gz (108 kB)
+Collecting importlib-metadata; python_version &lt; "3.8"
+  Downloading importlib_metadata-1.7.0-py2.py3-none-any.whl (31 kB)
+Collecting itsdangerous&gt;=0.24
+  Downloading itsdangerous-1.1.0-py2.py3-none-any.whl (16 kB)
+Collecting Jinja2&gt;=2.10.1
+  Downloading Jinja2-2.11.2-py2.py3-none-any.whl (125 kB)
+Collecting click&gt;=5.1
+  Downloading click-7.1.2-py2.py3-none-any.whl (82 kB)
+Collecting Werkzeug&gt;=0.15
+  Downloading Werkzeug-1.0.1-py2.py3-none-any.whl (298 kB)
+Collecting zipp&gt;=0.5
+  Downloading zipp-3.1.0-py3-none-any.whl (4.9 kB)
+Collecting MarkupSafe&gt;=0.23
+  Downloading MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl (27 kB)
+Building wheels for collected packages: sklearn, jaeger-client, opentracing, Flask-OpenTracing, PyYAML, threadloop, thrift, tornado, pyrsistent
+  Building wheel for sklearn (setup.py): started
+  Building wheel for sklearn (setup.py): finished with status 'done'
+  Created wheel for sklearn: filename=sklearn-0.0-py2.py3-none-any.whl size=1315 sha256=c6663f95549bdd109fa052add555e0c4c160b52c7e008d8fea26d816f4db9053
+  Stored in directory: /root/.cache/pip/wheels/46/ef/c3/157e41f5ee1372d1be90b09f74f82b10e391eaacca8f22d33e
+  Building wheel for jaeger-client (setup.py): started
+  Building wheel for jaeger-client (setup.py): finished with status 'done'
+  Created wheel for jaeger-client: filename=jaeger_client-4.3.0-py3-none-any.whl size=64291 sha256=0f18aca992ee72e11b05c7de433a8b5c5959dbb9240e6c1c7e322ee675959048
+  Stored in directory: /root/.cache/pip/wheels/4b/b9/d9/efe18893b02a4bc5abb68e0174d4ab10147f7f184dd170758e
+  Building wheel for opentracing (setup.py): started
+  Building wheel for opentracing (setup.py): finished with status 'done'
+  Created wheel for opentracing: filename=opentracing-2.3.0-py3-none-any.whl size=51347 sha256=f04a64db0214646796db1d7e861e1a1d398234fb60d2d807cf518b3a871e893e
+  Stored in directory: /root/.cache/pip/wheels/19/c5/4b/b030afc055aa78698cd96eb4b168b7f91bd9254191bf4e9f9f
+  Building wheel for Flask-OpenTracing (setup.py): started
+  Building wheel for Flask-OpenTracing (setup.py): finished with status 'done'
+  Created wheel for Flask-OpenTracing: filename=Flask_OpenTracing-1.1.0-py3-none-any.whl size=9070 sha256=8889a367cf5e75a7e4416edead3de69fefe432d42b1d2e19c12eb2212597a34a
+  Stored in directory: /root/.cache/pip/wheels/42/22/cd/ccb93fa68f4a01fb6c10082f97bcb2af9eb8e43565ce38a292
+  Building wheel for PyYAML (setup.py): started
+  Building wheel for PyYAML (setup.py): finished with status 'done'
+  Created wheel for PyYAML: filename=PyYAML-5.3.1-cp37-cp37m-linux_x86_64.whl size=44619 sha256=8abe3f338d2c78bc974f7c9ae3440f99e6df55ee3b262ee6e663cdb6d8ba714e
+  Stored in directory: /root/.cache/pip/wheels/5e/03/1e/e1e954795d6f35dfc7b637fe2277bff021303bd9570ecea653
+  Building wheel for threadloop (setup.py): started
+  Building wheel for threadloop (setup.py): finished with status 'done'
+  Created wheel for threadloop: filename=threadloop-1.0.2-py3-none-any.whl size=3423 sha256=18d6bf81e964b05bdda6d3b13e7216b6142041d2a699394a49fead7d6c0bdf4f
+  Stored in directory: /root/.cache/pip/wheels/08/93/e3/037c2555d98964d9ca537dabb39827a2b72470a679b5c0de37
+  Building wheel for thrift (setup.py): started
+  Building wheel for thrift (setup.py): finished with status 'done'
+  Created wheel for thrift: filename=thrift-0.13.0-py3-none-any.whl size=154885 sha256=502b079d519542e741efa3ca9dd5d3b5ef4f5b92c49756851c508dcb66a8169a
+  Stored in directory: /root/.cache/pip/wheels/79/35/5a/19f5dadf91f62bd783aaa8385f700de9bc14772e09ab0f006a
+  Building wheel for tornado (setup.py): started
+  Building wheel for tornado (setup.py): finished with status 'done'
+  Created wheel for tornado: filename=tornado-6.0.4-cp37-cp37m-linux_x86_64.whl size=415150 sha256=6fe87d010077fb2bda88f465f8284d05bb7f2e2d431f1ae47162a13026732ba1
+  Stored in directory: /root/.cache/pip/wheels/7d/14/fa/d88fb5da77d813ea0ffca38a2ab2a052874e9e1142bad0b348
+  Building wheel for pyrsistent (setup.py): started
+  Building wheel for pyrsistent (setup.py): finished with status 'done'
+  Created wheel for pyrsistent: filename=pyrsistent-0.16.0-cp37-cp37m-linux_x86_64.whl size=56582 sha256=0ac45ee5becbce6f6f04ed951c2c44cb82239326c858ad46b9c50da04106c549
+  Stored in directory: /root/.cache/pip/wheels/22/52/11/f0920f95c23ed7d2d0b05f2b7b2f4509e87a20cfe8ea43d987
+Successfully built sklearn jaeger-client opentracing Flask-OpenTracing PyYAML threadloop thrift tornado pyrsistent
+Installing collected packages: numpy, scipy, joblib, threadpoolctl, scikit-learn, sklearn, gunicorn, tornado, threadloop, six, thrift, opentracing, jaeger-client, certifi, urllib3, pytz, configparser, python-dateutil, minio, prometheus-client, idna, chardet, requests, attrs, pyrsistent, zipp, importlib-metadata, jsonschema, itsdangerous, MarkupSafe, Jinja2, click, Werkzeug, Flask, redis, Flask-cors, protobuf, Flask-OpenTracing, grpcio, flatbuffers, PyYAML, grpcio-opentracing, seldon-core
+Successfully installed Flask-1.1.2 Flask-OpenTracing-1.1.0 Flask-cors-3.0.8 Jinja2-2.11.2 MarkupSafe-1.1.1 PyYAML-5.3.1 Werkzeug-1.0.1 attrs-19.3.0 certifi-2020.6.20 chardet-3.0.4 click-7.1.2 configparser-5.0.0 flatbuffers-1.12 grpcio-1.30.0 grpcio-opentracing-1.1.4 gunicorn-20.0.4 idna-2.10 importlib-metadata-1.7.0 itsdangerous-1.1.0 jaeger-client-4.3.0 joblib-0.16.0 jsonschema-3.2.0 minio-5.0.10 numpy-1.19.1 opentracing-2.3.0 prometheus-client-0.8.0 protobuf-3.12.4 pyrsistent-0.16.0 python-dateutil-2.8.1 pytz-2020.1 redis-3.5.3 requests-2.24.0 scikit-learn-0.23.1 scipy-1.5.2 seldon-core-1.2.2 six-1.15.0 sklearn-0.0 threadloop-1.0.2 threadpoolctl-2.1.0 thrift-0.13.0 tornado-6.0.4 urllib3-1.25.10 zipp-3.1.0
+<span class="ansi-red-intense-fg">WARNING: You are using pip version 20.1.1; however, version 20.2 is available.
+You should consider upgrading via the '/usr/local/bin/python -m pip install --upgrade pip' command.
+</span>Removing intermediate container 611c0926cddc
+ ---&gt; e5c9c25eab23
+Step 5/10 : EXPOSE 5000
+ ---&gt; Running in b1becc35f355
+Removing intermediate container b1becc35f355
+ ---&gt; 00cd89defe7e
+Step 6/10 : ENV MODEL_NAME IrisClassifer
+ ---&gt; Running in 62c1a0b246f6
+Removing intermediate container 62c1a0b246f6
+ ---&gt; 17eeec5d0d61
+Step 7/10 : ENV API_TYPE REST
+ ---&gt; Running in c03ff1837bd4
+Removing intermediate container c03ff1837bd4
+ ---&gt; 6aaecc5b27bb
+Step 8/10 : ENV SERVICE_TYPE MODEL
+ ---&gt; Running in 810e13bc1727
+Removing intermediate container 810e13bc1727
+ ---&gt; b28972f57a5e
+Step 9/10 : ENV PERSISTENCE 0
+ ---&gt; Running in 162743c6449e
+Removing intermediate container 162743c6449e
+ ---&gt; eb4e7d50cab1
+Step 10/10 : CMD exec seldon-core-microservice $MODEL_NAME $API_TYPE --service-type $SERVICE_TYPE --persistence $PERSISTENCE
+ ---&gt; Running in 2b747f223cad
+Removing intermediate container 2b747f223cad
+ ---&gt; 04094c475db6
+Successfully built 04094c475db6
+Successfully tagged localhost:5000/iris_ex:latest
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>docker push localhost:5000/iris_ex:latest
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The push refers to repository [localhost:5000/iris_ex]
+
+c29a6535: Preparing 
+ba1ff41c: Preparing 
+63f2d025: Preparing 
+f01300cf: Preparing 
+a0be9040: Preparing 
+1a837902: Preparing 
+c29a6535: Pushed     276MB/269.6MBousingpriceinterface_seldonoutputtransformer_reporter Pushing  231.5MB/269.6MBlatest: digest: sha256:218dbbe53e08de366e7e82147853be659f6f5f1c7c807f66c161fdb86fbd0d1c size: 1791
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>docker run --name <span class="s2">"iris_predictor1"</span> -d --rm -p <span class="m">5001</span>:5000 localhost:5000/iris_ex:latest
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>44e899193312740cd72eab8a23d5dffdafb1f3725682710880dcaca5545b7386
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>curl  -s http://localhost:5001/predict -H <span class="s2">"Content-Type: application/json"</span> -d <span class="s1">'{"data":{"ndarray":[[5.964,4.006,2.081,1.031]]}}'</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you see successful output, you have your first seldon-core-microservice up and running!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>docker container ls
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+e931762bb6d3        registry:2          "/entrypoint.sh /etc…"   44 hours ago        Up 44 hours         0.0.0.0:5000-&gt;5000/tcp   kind-registry
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="ntorba/writing"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/writing/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/writing/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/writing/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Imma write some things here</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/ntorba" title="ntorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/nicktorba" title="nicktorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
