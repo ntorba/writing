@@ -129,17 +129,53 @@ window.onload = wrap_img;
 
 <ol>
   <li>
-<a href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html">Launch a local kubernetes cluster</a>. Follow this guide to get a local kubernetes cluster up and running so you can experiment locally. Skip this section if you already have access to a kubernetes cluster.</li>
-  <li><a href="">First Seldon Deployment</a></li>
+<a href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html">Launch a local kubernetes cluster</a>
+    <ul>
+      <li>Get a local kubernetes cluster up and running so you can experiment locally! Important for those of us who don’t have easy access to a remote cluster.</li>
+    </ul>
+  </li>
   <li>
-<a href="">Seldon Deployments: Custom Resources on Kubernetes</a>. Create your first seldon deployment and read about what makes the seldon deployment custom resource so useful.</li>
+<a href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html">First Seldon Deployment</a>
+    <ul>
+      <li>Deploy a model endpoint on kubernetes!</li>
+    </ul>
+  </li>
+  <li>
+<a href="">Multi-component Seldon Deployment</a>
+    <ul>
+      <li>Use multiple seldon-core components to deploy and inference graph!</li>
+    </ul>
+  </li>
+  <li>
+<a href="">Explore the Kubernetes API</a>
+    <ul>
+      <li>Use <code class="highlighter-rouge">kubectl proxy</code> to understand how to communicate with a kubernetes cluster!</li>
+    </ul>
+  </li>
+  <li>
+<a href="">Seldon-core Custom Resource and Operator</a>. Create your first seldon deployment and read about what makes the seldon deployment custom resource so useful.
+    <ul>
+      <li>Take a closer look at how seldon-core and seldon-core-operator extend the kubernetes api and make it easy to deploy seldon inference graphs!</li>
+    </ul>
+  </li>
   <li>
 <a href="">Debugging Seldon Deployments</a>. Take a look at where to find your logs and diagnosis some common issues.</li>
   <li><a href="">Seldon-core analytics and load testing with Locust</a></li>
   <li>
-<a href="">Advanced Seldon Deployments</a>. Explore deploying to multiple pods and defining Horizontal Pod Autoscaling.</li>
+<a href="">Multi-pod Seldon Deployments</a>.
+    <ul>
+      <li>Deploy individual components of your inference graph in their own pods to define custom deployment specs!</li>
+    </ul>
+  </li>
   <li>
-<a href="">CD with Argocd</a>. Explore how to use argocd to continuously deploy.</li>
+<a href="">Horizontal Pod Autoscaling Seldon Deployments</a>
+    <ul>
+      <li>Autoscaling your deployments!</li>
+    </ul>
+  </li>
+  <li>
+<a href="">CD with Argocd</a> 
+    * Try out Argocd for continuous deployment!</li>
 </ol>
 
 <h1 id="why-seldon-core">
