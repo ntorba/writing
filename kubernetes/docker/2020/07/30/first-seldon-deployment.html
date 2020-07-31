@@ -94,7 +94,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      7 min read
+      6 min read
     
 </span></p>
 
@@ -189,6 +189,35 @@ Below, I create a cluster, create a namespace called seldon-intro, then use <cod
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Creating cluster "kind" ...
+ <span class="ansi-green-fg">✓</span> Ensuring node image (kindest/node:v1.17.0) 🖼
+ <span class="ansi-green-fg">✓</span> Preparing nodes 📦 7l
+ <span class="ansi-green-fg">✓</span> Writing configuration 📜7l
+ <span class="ansi-green-fg">✓</span> Starting control-plane 🕹️7l
+ <span class="ansi-green-fg">✓</span> Installing CNI 🔌7l
+ <span class="ansi-green-fg">✓</span> Installing StorageClass 💾7l
+Set kubectl context to "kind-kind"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-kind
+
+Not sure what to do next? 😅 Check out https://kind.sigs.k8s.io/docs/user/quick-start/
+namespace/seldon-intro created
+Context "kind-kind" modified.
+Active namespace is "seldon-intro".
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
     
 
@@ -222,6 +251,25 @@ Below, I create a cluster, create a namespace called seldon-intro, then use <cod
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>NAME: seldon-core
+LAST DEPLOYED: Fri Jul 31 07:09:00 2020
+NAMESPACE: seldon-intro
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
     
 
@@ -240,10 +288,30 @@ Below, I create a cluster, create a namespace called seldon-intro, then use <cod
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl get deployments, pods
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl get pods
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-----"</span><span class="p">)</span>
+<span class="o">!</span>kubectl get deployments
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>NAME                                        READY   STATUS    RESTARTS   AGE
+seldon-controller-manager-bc4b8bf64-fssv5   1/1     Running   0          37s
+-----
+NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
+seldon-controller-manager   1/1     1            1           45s
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -349,7 +417,7 @@ This is a classic sklearn example we will be able to get up quick.</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Writing iris_classifier/train_iris.py
+<pre>Overwriting iris_classifier/train_iris.py
 </pre>
 </div>
 </div>
@@ -384,7 +452,7 @@ This is a classic sklearn example we will be able to get up quick.</p>
 Dataset loaded!
 Training model...
 Model trained!
-Saving model in IrisClassifier.sav
+Saving model in iris_classifier/IrisClassifier.sav
 Model saved!
 </pre>
 </div>
@@ -425,7 +493,7 @@ Model saved!
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Writing iris_classifier/IrisClassifier.py
+<pre>Overwriting iris_classifier/IrisClassifier.py
 </pre>
 </div>
 </div>
@@ -466,7 +534,7 @@ Model saved!
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Writing iris_classifier/requirements.txt
+<pre>Overwriting iris_classifier/requirements.txt
 </pre>
 </div>
 </div>
@@ -544,204 +612,6 @@ Model saved!
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Sending build context to Docker daemon  10.24kB
-Step 1/10 : FROM python:3.7-slim
- ---&gt; b386e7420fc3
-Step 2/10 : COPY . /app
- ---&gt; 76c42605d763
-Step 3/10 : WORKDIR /app
- ---&gt; Running in 85636b5172e2
-Removing intermediate container 85636b5172e2
- ---&gt; f4bf613a6752
-Step 4/10 : RUN pip install -r requirements.txt
- ---&gt; Running in a899f52db252
-Collecting sklearn
-  Downloading sklearn-0.0.tar.gz (1.1 kB)
-Collecting seldon-core
-  Downloading seldon_core-1.2.2-py3-none-any.whl (108 kB)
-Collecting scikit-learn
-  Downloading scikit_learn-0.23.1-cp37-cp37m-manylinux1_x86_64.whl (6.8 MB)
-Collecting gunicorn&lt;20.1.0,&gt;=19.9.0
-  Downloading gunicorn-20.0.4-py2.py3-none-any.whl (77 kB)
-Requirement already satisfied: setuptools&gt;=41.0.0 in /usr/local/lib/python3.7/site-packages (from seldon-core-&gt;-r requirements.txt (line 2)) (47.3.1)
-Collecting jsonschema&lt;4.0.0
-  Downloading jsonschema-3.2.0-py2.py3-none-any.whl (56 kB)
-Collecting protobuf&lt;4.0.0
-  Downloading protobuf-3.12.4-cp37-cp37m-manylinux1_x86_64.whl (1.3 MB)
-Collecting grpcio-opentracing&lt;1.2.0,&gt;=1.1.4
-  Downloading grpcio_opentracing-1.1.4-py3-none-any.whl (14 kB)
-Collecting Flask-cors&lt;4.0.0
-  Downloading Flask_Cors-3.0.8-py2.py3-none-any.whl (14 kB)
-Collecting minio&lt;6.0.0,&gt;=4.0.9
-  Downloading minio-5.0.10-py2.py3-none-any.whl (75 kB)
-Collecting requests&lt;3.0.0
-  Downloading requests-2.24.0-py2.py3-none-any.whl (61 kB)
-Collecting Flask&lt;2.0.0
-  Downloading Flask-1.1.2-py2.py3-none-any.whl (94 kB)
-Collecting redis&lt;4.0.0
-  Downloading redis-3.5.3-py2.py3-none-any.whl (72 kB)
-Collecting Flask-OpenTracing&lt;1.2.0,&gt;=1.1.0
-  Downloading Flask-OpenTracing-1.1.0.tar.gz (8.2 kB)
-Collecting jaeger-client&lt;4.4.0,&gt;=4.1.0
-  Downloading jaeger-client-4.3.0.tar.gz (81 kB)
-Collecting numpy&lt;2.0.0
-  Downloading numpy-1.19.1-cp37-cp37m-manylinux2010_x86_64.whl (14.5 MB)
-Collecting prometheus-client&lt;0.9.0,&gt;=0.7.1
-  Downloading prometheus_client-0.8.0-py2.py3-none-any.whl (53 kB)
-Collecting PyYAML&lt;5.4
-  Downloading PyYAML-5.3.1.tar.gz (269 kB)
-Collecting opentracing&lt;2.4.0,&gt;=2.2.0
-  Downloading opentracing-2.3.0.tar.gz (48 kB)
-Collecting flatbuffers&lt;2.0.0
-  Downloading flatbuffers-1.12-py2.py3-none-any.whl (15 kB)
-Collecting grpcio&lt;2.0.0
-  Downloading grpcio-1.30.0-cp37-cp37m-manylinux2010_x86_64.whl (3.0 MB)
-Collecting joblib&gt;=0.11
-  Downloading joblib-0.16.0-py3-none-any.whl (300 kB)
-Collecting scipy&gt;=0.19.1
-  Downloading scipy-1.5.2-cp37-cp37m-manylinux1_x86_64.whl (25.9 MB)
-Collecting threadpoolctl&gt;=2.0.0
-  Downloading threadpoolctl-2.1.0-py3-none-any.whl (12 kB)
-Collecting six&gt;=1.11.0
-  Downloading six-1.15.0-py2.py3-none-any.whl (10 kB)
-Collecting importlib-metadata; python_version &lt; "3.8"
-  Downloading importlib_metadata-1.7.0-py2.py3-none-any.whl (31 kB)
-Collecting pyrsistent&gt;=0.14.0
-  Downloading pyrsistent-0.16.0.tar.gz (108 kB)
-Collecting attrs&gt;=17.4.0
-  Downloading attrs-19.3.0-py2.py3-none-any.whl (39 kB)
-Collecting configparser
-  Downloading configparser-5.0.0-py3-none-any.whl (22 kB)
-Collecting python-dateutil
-  Downloading python_dateutil-2.8.1-py2.py3-none-any.whl (227 kB)
-Collecting certifi
-  Downloading certifi-2020.6.20-py2.py3-none-any.whl (156 kB)
-Collecting urllib3
-  Downloading urllib3-1.25.10-py2.py3-none-any.whl (127 kB)
-Collecting pytz
-  Downloading pytz-2020.1-py2.py3-none-any.whl (510 kB)
-Collecting chardet&lt;4,&gt;=3.0.2
-  Downloading chardet-3.0.4-py2.py3-none-any.whl (133 kB)
-Collecting idna&lt;3,&gt;=2.5
-  Downloading idna-2.10-py2.py3-none-any.whl (58 kB)
-Collecting itsdangerous&gt;=0.24
-  Downloading itsdangerous-1.1.0-py2.py3-none-any.whl (16 kB)
-Collecting Werkzeug&gt;=0.15
-  Downloading Werkzeug-1.0.1-py2.py3-none-any.whl (298 kB)
-Collecting Jinja2&gt;=2.10.1
-  Downloading Jinja2-2.11.2-py2.py3-none-any.whl (125 kB)
-Collecting click&gt;=5.1
-  Downloading click-7.1.2-py2.py3-none-any.whl (82 kB)
-Collecting threadloop&lt;2,&gt;=1
-  Downloading threadloop-1.0.2.tar.gz (4.9 kB)
-Collecting thrift
-  Downloading thrift-0.13.0.tar.gz (59 kB)
-Collecting tornado&gt;=4.3
-  Downloading tornado-6.0.4.tar.gz (496 kB)
-Collecting zipp&gt;=0.5
-  Downloading zipp-3.1.0-py3-none-any.whl (4.9 kB)
-Collecting MarkupSafe&gt;=0.23
-  Downloading MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl (27 kB)
-Building wheels for collected packages: sklearn, Flask-OpenTracing, jaeger-client, PyYAML, opentracing, pyrsistent, threadloop, thrift, tornado
-  Building wheel for sklearn (setup.py): started
-  Building wheel for sklearn (setup.py): finished with status 'done'
-  Created wheel for sklearn: filename=sklearn-0.0-py2.py3-none-any.whl size=1315 sha256=d57a3d7fc8fdc05876bf438f26f8cff4722b0a05138d2bed022fee0a4178e0f3
-  Stored in directory: /root/.cache/pip/wheels/46/ef/c3/157e41f5ee1372d1be90b09f74f82b10e391eaacca8f22d33e
-  Building wheel for Flask-OpenTracing (setup.py): started
-  Building wheel for Flask-OpenTracing (setup.py): finished with status 'done'
-  Created wheel for Flask-OpenTracing: filename=Flask_OpenTracing-1.1.0-py3-none-any.whl size=9070 sha256=a9eea2227c6a62575da5bb4ceff30ac5e17aeb30ecd101c439ecf4159c8d5e8d
-  Stored in directory: /root/.cache/pip/wheels/42/22/cd/ccb93fa68f4a01fb6c10082f97bcb2af9eb8e43565ce38a292
-  Building wheel for jaeger-client (setup.py): started
-  Building wheel for jaeger-client (setup.py): finished with status 'done'
-  Created wheel for jaeger-client: filename=jaeger_client-4.3.0-py3-none-any.whl size=64291 sha256=dc0fbf6075563689924d174359a56b441971377e532fe540aad00cfd50f10dab
-  Stored in directory: /root/.cache/pip/wheels/4b/b9/d9/efe18893b02a4bc5abb68e0174d4ab10147f7f184dd170758e
-  Building wheel for PyYAML (setup.py): started
-  Building wheel for PyYAML (setup.py): finished with status 'done'
-  Created wheel for PyYAML: filename=PyYAML-5.3.1-cp37-cp37m-linux_x86_64.whl size=44619 sha256=9a28fcdb6b77d49046224761229a1fa1270299f45df01b3b5ae6de0a1daca067
-  Stored in directory: /root/.cache/pip/wheels/5e/03/1e/e1e954795d6f35dfc7b637fe2277bff021303bd9570ecea653
-  Building wheel for opentracing (setup.py): started
-  Building wheel for opentracing (setup.py): finished with status 'done'
-  Created wheel for opentracing: filename=opentracing-2.3.0-py3-none-any.whl size=51347 sha256=605e45a582659fe490b17eb5988ee9f92fa214718c7604289f08a50df86acb66
-  Stored in directory: /root/.cache/pip/wheels/19/c5/4b/b030afc055aa78698cd96eb4b168b7f91bd9254191bf4e9f9f
-  Building wheel for pyrsistent (setup.py): started
-  Building wheel for pyrsistent (setup.py): finished with status 'done'
-  Created wheel for pyrsistent: filename=pyrsistent-0.16.0-cp37-cp37m-linux_x86_64.whl size=56582 sha256=27a2d1e0299e32ba654bd4a8271c2637403c7ef324b44e2cd984215077e5ebeb
-  Stored in directory: /root/.cache/pip/wheels/22/52/11/f0920f95c23ed7d2d0b05f2b7b2f4509e87a20cfe8ea43d987
-  Building wheel for threadloop (setup.py): started
-  Building wheel for threadloop (setup.py): finished with status 'done'
-  Created wheel for threadloop: filename=threadloop-1.0.2-py3-none-any.whl size=3423 sha256=18cf5f752d27762c81dff6886c477c87643fe81557c07c7a09bf0f019fedcd6c
-  Stored in directory: /root/.cache/pip/wheels/08/93/e3/037c2555d98964d9ca537dabb39827a2b72470a679b5c0de37
-  Building wheel for thrift (setup.py): started
-  Building wheel for thrift (setup.py): finished with status 'done'
-  Created wheel for thrift: filename=thrift-0.13.0-py3-none-any.whl size=154885 sha256=aaf21a6909c23fd65626437406e9378d6a68462f9a513723fe8ea68260bc6d6c
-  Stored in directory: /root/.cache/pip/wheels/79/35/5a/19f5dadf91f62bd783aaa8385f700de9bc14772e09ab0f006a
-  Building wheel for tornado (setup.py): started
-  Building wheel for tornado (setup.py): finished with status 'done'
-  Created wheel for tornado: filename=tornado-6.0.4-cp37-cp37m-linux_x86_64.whl size=415150 sha256=48ef74922c2f09c562d7c1e368321240410a5b5cfb847d76cd4a780bab72a33b
-  Stored in directory: /root/.cache/pip/wheels/7d/14/fa/d88fb5da77d813ea0ffca38a2ab2a052874e9e1142bad0b348
-Successfully built sklearn Flask-OpenTracing jaeger-client PyYAML opentracing pyrsistent threadloop thrift tornado
-Installing collected packages: joblib, numpy, scipy, threadpoolctl, scikit-learn, sklearn, gunicorn, six, zipp, importlib-metadata, pyrsistent, attrs, jsonschema, protobuf, opentracing, grpcio, grpcio-opentracing, itsdangerous, Werkzeug, MarkupSafe, Jinja2, click, Flask, Flask-cors, configparser, python-dateutil, certifi, urllib3, pytz, minio, chardet, idna, requests, redis, Flask-OpenTracing, tornado, threadloop, thrift, jaeger-client, prometheus-client, PyYAML, flatbuffers, seldon-core
-Successfully installed Flask-1.1.2 Flask-OpenTracing-1.1.0 Flask-cors-3.0.8 Jinja2-2.11.2 MarkupSafe-1.1.1 PyYAML-5.3.1 Werkzeug-1.0.1 attrs-19.3.0 certifi-2020.6.20 chardet-3.0.4 click-7.1.2 configparser-5.0.0 flatbuffers-1.12 grpcio-1.30.0 grpcio-opentracing-1.1.4 gunicorn-20.0.4 idna-2.10 importlib-metadata-1.7.0 itsdangerous-1.1.0 jaeger-client-4.3.0 joblib-0.16.0 jsonschema-3.2.0 minio-5.0.10 numpy-1.19.1 opentracing-2.3.0 prometheus-client-0.8.0 protobuf-3.12.4 pyrsistent-0.16.0 python-dateutil-2.8.1 pytz-2020.1 redis-3.5.3 requests-2.24.0 scikit-learn-0.23.1 scipy-1.5.2 seldon-core-1.2.2 six-1.15.0 sklearn-0.0 threadloop-1.0.2 threadpoolctl-2.1.0 thrift-0.13.0 tornado-6.0.4 urllib3-1.25.10 zipp-3.1.0
-<span class="ansi-red-intense-fg">WARNING: You are using pip version 20.1.1; however, version 20.2 is available.
-You should consider upgrading via the '/usr/local/bin/python -m pip install --upgrade pip' command.
-</span>Removing intermediate container a899f52db252
- ---&gt; d2f0ae0e17b3
-Step 5/10 : EXPOSE 5000
- ---&gt; Running in 16bd0d552e1f
-Removing intermediate container 16bd0d552e1f
- ---&gt; 9be0daff411e
-Step 6/10 : ENV MODEL_NAME IrisClassifier
- ---&gt; Running in d96157d482bb
-Removing intermediate container d96157d482bb
- ---&gt; bdf5abb5c6fa
-Step 7/10 : ENV API_TYPE REST
- ---&gt; Running in 0440c0675788
-Removing intermediate container 0440c0675788
- ---&gt; 0752c26f1325
-Step 8/10 : ENV SERVICE_TYPE MODEL
- ---&gt; Running in e7f4ed43f1e5
-Removing intermediate container e7f4ed43f1e5
- ---&gt; cf9d2fb5e410
-Step 9/10 : ENV PERSISTENCE 0
- ---&gt; Running in 4eb649daf1b9
-Removing intermediate container 4eb649daf1b9
- ---&gt; d2568f29919c
-Step 10/10 : CMD exec seldon-core-microservice $MODEL_NAME $API_TYPE --service-type $SERVICE_TYPE --persistence $PERSISTENCE
- ---&gt; Running in e7e96ff83895
-Removing intermediate container e7e96ff83895
- ---&gt; 9dbbd5a96d36
-Successfully built 9dbbd5a96d36
-Successfully tagged localhost:5000/iris_ex:latest
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    
-
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># !docker push localhost:5000/iris_ex:latest</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
 </div>
     
 
@@ -765,7 +635,8 @@ Successfully tagged localhost:5000/iris_ex:latest
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>5eec4505001959617aa301ca764808ba6921abffb450cfcdbed0139e3d74b705
+<pre>docker: Error response from daemon: Conflict. The container name "/iris_predictor1" is already in use by container "11bd5c0f4e343f03b80c6b845c0374ad22fe22cd40c2cf1240afb6675b5e8d1c". You have to remove (or rename) that container to be able to reuse that name.
+See 'docker run --help'.
 </pre>
 </div>
 </div>
@@ -819,7 +690,292 @@ Successfully tagged localhost:5000/iris_ex:latest
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you see successful output, you have your first seldon-core-microservice up and running!</p>
+<p>If you see successful output, you have your first seldon-core-microservice up and running! Now, we will deploy this as a simple inference graph on our kubernetes cluster. 
+First, let's take down the running docker container:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>docker rm iris_predictor --force
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>iris_predictor
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, need to define our deployment configuration file. Here is a seldon config file for our deployment:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%writefile</span> iris_classifier/sklearn_iris_deployment.yaml
+<span class="n">apiVersion</span><span class="p">:</span> <span class="n">machinelearning</span><span class="o">.</span><span class="n">seldon</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">v1alpha2</span>
+<span class="n">kind</span><span class="p">:</span> <span class="n">SeldonDeployment</span>
+<span class="n">metadata</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">seldon</span><span class="o">-</span><span class="n">deployment</span><span class="o">-</span><span class="n">example</span>
+<span class="n">spec</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="o">-</span><span class="n">deployment</span>
+  <span class="n">predictors</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">componentSpecs</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">spec</span><span class="p">:</span>
+        <span class="n">containers</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">image</span><span class="p">:</span> <span class="n">seldonio</span><span class="o">/</span><span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="p">:</span><span class="mf">0.1</span>
+          <span class="n">imagePullPolicy</span><span class="p">:</span> <span class="n">IfNotPresent</span>
+          <span class="n">name</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="o">-</span><span class="n">classifier</span>
+    <span class="n">graph</span><span class="p">:</span>
+      <span class="n">children</span><span class="p">:</span> <span class="p">[]</span>
+      <span class="n">endpoint</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">REST</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="o">-</span><span class="n">classifier</span>
+      <span class="nb">type</span><span class="p">:</span> <span class="n">MODEL</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="o">-</span><span class="n">predictor</span>
+    <span class="n">replicas</span><span class="p">:</span> <span class="mi">1</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Writing iris_classifier/sklearn_iris_deployment.yaml
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Some important notes about the deployment config:</p>
+<ul>
+<li>apiVersion: this sends out request to the appropriate endpoint of the kubernets api, which was installed by helm earlier in this tutorial</li>
+<li>kind: tells Kubernetes what kind of resource to create. </li>
+<li>metadata: add labels, like name, to the deployment</li>
+<li>spec: <ul>
+<li>predictors: this is a list of predictors to deploy. It is a list because you have the option to create multiple inference graphs in the same spec. This is useful for things like Canary deployment, where you only want a new graph to recieve a small percentage of traffic<ul>
+<li>componentSpecs: add information about the containers that need to be pulled to create our graph. In our case, we only need a single containe to serve our model. If we were creating a more complex inference graph (maybe with a transformer, router, and another model, then we would need to include the docker containers that house them in this section)</li>
+<li>graph: this is where you define the flow of components. This is easy in our case, there is only one component so we define one endpoint with no children. If there were more compnoents, we would fill out the children componenets in the children attriubte of the head of the graph. Seldon graphs are built implicitly through the use of the children attribute of each node in the graph. </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>There is one last step to deploy our graph, we must push our docker container to a registry! I am running a local registry with my kind cluster, thanks to the script given <a href="https://kind.sigs.k8s.io/docs/user/local-registry/">here</a>. You can also push to DockerHub as well.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>docker push localhost:5000/iris_ex:latest
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The push refers to repository [localhost:5000/iris_ex]
+
+fd587320: Preparing 
+308ed686: Preparing 
+63f2d025: Preparing 
+f01300cf: Preparing 
+a0be9040: Preparing 
+1a837902: Preparing 
+fd587320: Pushed     276MB/269.6MBPushing  109.8MB/269.6MBPushing    187MB/269.6MBlatest: digest: sha256:696a49e226fd1e9125a1af606abeae22b45d7770e0feea91600ba1ff0ddab50d size: 1792
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With our docker image in a registry, it is available to our cluster, so we can deploy!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl apply -f iris_classifier/sklearn_iris_deployment.yaml
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>seldondeployment.machinelearning.seldon.io/seldon-deployment-example created
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can check the status of your deployment.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl rollout status deploy/<span class="k">$(</span>kubectl get deploy -l seldon-deployment-id<span class="o">=</span>seldon-deployment-example <span class="err">\</span>
+                                 <span class="o">-</span><span class="n">o</span> <span class="n">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].metadata.name}'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Waiting for deployment "seldon-92a927e5e90d7602e08ba9b9304f70e8" rollout to finish: 0 of 1 updated replicas are available...
+deployment "seldon-92a927e5e90d7602e08ba9b9304f70e8" successfully rolled out
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Once the deployment is ready, you will need to port-forward the pod to your localhost in order check the request. That can be done wiht kubectl port-forward command</p>
+<div class="highlight"><pre><span></span>kubectl port-forward <span class="k">$(</span>kubectl get pods -l seldon-app<span class="o">=</span>seldon-deployment-example-sklearn-iris-predictor -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].metadata.na}'</span><span class="k">)</span> <span class="m">9000</span>:9000<span class="sb">`</span>
+</pre></div>
+<p>You must run this command in a separate window because it will need to run while we curl the endpoint.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>curl -s http://localhost:9000/predict -H <span class="s2">"Content-Type: application/json"</span> -d <span class="s1">'{"data":{"ndarray":[[5.964,4.006,2.081,1.031]]}}'</span>
+        
+        
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{"data":{"names":["t:0","t:1","t:2"],"ndarray":[[0.9548873249364169,0.04505474761561406,5.792744796895234e-05]]},"meta":{}}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You have successfully created a seldon endpoint on kubernetes!</p>
 
 </div>
 </div>
