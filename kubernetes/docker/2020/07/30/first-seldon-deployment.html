@@ -481,6 +481,7 @@ Model saved!
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#collapse_show</span>
+<span class="c1">#hide_output</span>
 <span class="o">%%writefile</span> iris_classifier/IrisClassifier.py
 <span class="kn">import</span> <span class="nn">joblib</span>
 
@@ -530,26 +531,13 @@ Model saved!
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%writefile</span> iris_classifier/requirements.txt
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#hide_output</span>
+<span class="o">%%writefile</span> iris_classifier/requirements.txt
 <span class="n">sklearn</span>
 <span class="n">seldon</span><span class="o">-</span><span class="n">core</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Overwriting iris_classifier/requirements.txt
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -567,6 +555,7 @@ Model saved!
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#collapse_show</span>
+<span class="c1">#hide_output</span>
 <span class="o">%%writefile</span> iris_classifier/Dockerfile
 <span class="n">FROM</span> <span class="n">python</span><span class="p">:</span><span class="mf">3.7</span><span class="o">-</span><span class="n">slim</span>
 <span class="n">COPY</span> <span class="o">.</span> <span class="o">/</span><span class="n">app</span>
@@ -679,7 +668,6 @@ Model saved!
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>curl  -s http://localhost:5001/predict -H <span class="s2">"Content-Type: application/json"</span> -d <span class="s1">'{"data":{"ndarray":[[5.964,4.006,2.081,1.031]]}}'</span>
-        
 </pre></div>
 
     </div>
@@ -758,7 +746,8 @@ First, let's take down the running docker container:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%writefile</span> iris_classifier/sklearn_iris_deployment.yaml
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#hide_output</span>
+<span class="o">%%writefile</span> iris_classifier/sklearn_iris_deployment.yaml
 <span class="n">apiVersion</span><span class="p">:</span> <span class="n">machinelearning</span><span class="o">.</span><span class="n">seldon</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">v1alpha2</span>
 <span class="n">kind</span><span class="p">:</span> <span class="n">SeldonDeployment</span>
 <span class="n">metadata</span><span class="p">:</span>
@@ -783,20 +772,6 @@ First, let's take down the running docker container:</p>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Writing iris_classifier/sklearn_iris_deployment.yaml
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
