@@ -10,13 +10,24 @@ categories: [markdown, seldon, kubernetes, python]
 # Intro 
 I recently started working with with the [seldon-core](https://docs.seldon.io/projects/seldon-core/en/v1.1.0/) project. I am working on a team now that is developing an ML platform to allower researchers to quickly serve and monitor ML models at scale. Seldon-core is a fantastic tool to build on top of for this project. Seldon-core deploys models at scale by leveraging kubernetes. The only problem was, I had never used kubernetes before. 
 
-1. [Launch a local kubernetes cluster](https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html). Follow this guide to get a local kubernetes cluster up and running so you can experiment locally. Skip this section if you already have access to a kubernetes cluster.
-2. [First Seldon Deployment]() 
-3. [Seldon Deployments: Custom Resources on Kubernetes](). Create your first seldon deployment and read about what makes the seldon deployment custom resource so useful. 
-4. [Debugging Seldon Deployments](). Take a look at where to find your logs and diagnosis some common issues. 
-5. [Seldon-core analytics and load testing with Locust]()
-5. [Advanced Seldon Deployments](). Explore deploying to multiple pods and defining Horizontal Pod Autoscaling.
-6.  [CD with Argocd](). Explore how to use argocd to continuously deploy. 
+1. [Launch a local kubernetes cluster](https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html) 
+    * Get a local kubernetes cluster up and running so you can experiment locally! Important for those of us who don't have easy access to a remote cluster.
+2. [First Seldon Deployment](https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html)
+    * Deploy a model endpoint on kubernetes!
+3. [Multi-component Seldon Deployment]()
+    * Use multiple seldon-core components to deploy and inference graph!
+4. [Explore the Kubernetes API]()
+    * Use `kubectl proxy` to understand how to communicate with a kubernetes cluster!
+5. [Seldon-core Custom Resource and Operator](). Create your first seldon deployment and read about what makes the seldon deployment custom resource so useful. 
+    * Take a closer look at how seldon-core and seldon-core-operator extend the kubernetes api and make it easy to deploy seldon inference graphs! 
+6. [Debugging Seldon Deployments](). Take a look at where to find your logs and diagnosis some common issues. 
+7. [Seldon-core analytics and load testing with Locust]()
+8. [Multi-pod Seldon Deployments](). 
+    * Deploy individual components of your inference graph in their own pods to define custom deployment specs! 
+9. [Horizontal Pod Autoscaling Seldon Deployments]()
+    * Autoscaling your deployments! 
+10.  [CD with Argocd]() 
+    * Try out Argocd for continuous deployment!
     
 
 # Why Seldon-core? 
