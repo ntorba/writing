@@ -94,7 +94,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      7 min read
+      6 min read
     
 </span></p>
 
@@ -129,9 +129,7 @@ window.onload = wrap_img;
     <ul class="section-nav">
 <li class="toc-entry toc-h3"><a href="#Reqs">Reqs </a></li>
 <li class="toc-entry toc-h3"><a href="#Goal">Goal </a></li>
-<li class="toc-entry toc-h3"><a href="#Launch-cluster">Launch cluster </a></li>
-<li class="toc-entry toc-h3"><a href="#Install-seldon-core">Install seldon-core </a></li>
-<li class="toc-entry toc-h3"><a href="#Build-example">Build example </a></li>
+<li class="toc-entry toc-h3"><a href="#Define-Python-Component">Define Python Component </a></li>
 <li class="toc-entry toc-h3"><a href="#Conclusion">Conclusion </a></li>
 </ul><!--
 #################################################
@@ -156,7 +154,10 @@ window.onload = wrap_img;
 <a class="anchor" href="#Reqs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reqs<a class="anchor-link" href="#Reqs"> </a>
 </h3>
 <ul>
-<li>access to kubernetes cluster (use <a href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html">Launch a local kubernetes cluster</a> if you need one) </li>
+<li>access to kubernetes cluster <ul>
+<li>If you are coming from <a href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html">Launch a local kubernetes cluster</a>, you are good to follow this example. If not, you can quickly follow that post before running the example here!</li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -171,6 +172,15 @@ window.onload = wrap_img;
 <ul>
 <li>Launch first seldon deployment with grpc or rest </li>
 </ul>
+<p>We will do this by following these steps:</p>
+<ol>
+<li>Define python component</li>
+<li>Write a Dockerfile, requirements.txt, then build the image</li>
+<li>Run a container based on new image to test the endpoint</li>
+<li>Define SeldonDeployment yaml file </li>
+<li>
+<code>kubectl apply</code> SeldonDeployment to the cluster. </li>
+</ol>
 
 </div>
 </div>
@@ -178,172 +188,8 @@ window.onload = wrap_img;
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Launch-cluster">
-<a class="anchor" href="#Launch-cluster" aria-hidden="true"><span class="octicon octicon-link"></span></a>Launch cluster<a class="anchor-link" href="#Launch-cluster"> </a>
-</h3>
-<p>If you aren't using kind, just ignore the kind commands use. 
-Below, I create a cluster, create a namespace called seldon-intro, then use <code>kubens</code> to make seldon-into my default namespace (so I don't have to include it in every command).</p>
-
-</div>
-</div>
-</div>
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kind create cluster 
-<span class="o">!</span>kubectl create namespace seldon-intro
-<span class="o">!</span>kubens seldon-intro
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Creating cluster "kind" ...
- <span class="ansi-green-fg">✓</span> Ensuring node image (kindest/node:v1.17.0) 🖼
- <span class="ansi-green-fg">✓</span> Preparing nodes 📦 7l
- <span class="ansi-green-fg">✓</span> Writing configuration 📜7l
- <span class="ansi-green-fg">✓</span> Starting control-plane 🕹️7l
- <span class="ansi-green-fg">✓</span> Installing CNI 🔌7l
- <span class="ansi-green-fg">✓</span> Installing StorageClass 💾7l
-Set kubectl context to "kind-kind"
-You can now use your cluster with:
-
-kubectl cluster-info --context kind-kind
-
-Have a question, bug, or feature request? Let us know! https://kind.sigs.k8s.io/#community 🙂
-namespace/seldon-intro created
-Context "kind-kind" modified.
-Active namespace is "seldon-intro".
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Install-seldon-core">
-<a class="anchor" href="#Install-seldon-core" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install seldon-core<a class="anchor-link" href="#Install-seldon-core"> </a>
-</h3>
-<p>To install seldon-core on the cluster, use helm. To install helm itself, find directions <a href="https://helm.sh/">here</a>, or use <code>brew install helm</code> on mac.</p>
-<p>Once helm is installed, use it to install seldon-core and seldon-core-operator with the following command:</p>
-
-</div>
-</div>
-</div>
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>helm install seldon-core seldon-core-operator <span class="err">\</span>
-    <span class="o">--</span><span class="n">repo</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">storage</span><span class="o">.</span><span class="n">googleapis</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">seldon</span><span class="o">-</span><span class="n">charts</span> \
-    <span class="o">--</span><span class="nb">set</span> <span class="n">usageMetrics</span><span class="o">.</span><span class="n">enabled</span><span class="o">=</span><span class="n">true</span> \
-    <span class="o">--</span><span class="nb">set</span> <span class="n">ambassador</span><span class="o">.</span><span class="n">enabled</span><span class="o">=</span><span class="n">true</span> \
-    <span class="o">--</span><span class="n">namespace</span> <span class="n">seldon</span><span class="o">-</span><span class="n">intro</span> 
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>NAME: seldon-core
-LAST DEPLOYED: Tue Aug  4 08:52:10 2020
-NAMESPACE: seldon-intro
-STATUS: deployed
-REVISION: 1
-TEST SUITE: None
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To check the install is running correctly, run the following command:</p>
-
-</div>
-</div>
-</div>
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl get pods
-<span class="nb">print</span><span class="p">(</span><span class="s2">"-----"</span><span class="p">)</span>
-<span class="o">!</span>kubectl get deployments
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>No resources found in seldon-intro namespace.
------
-NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
-seldon-controller-manager   0/1     0            0           1s
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    
-
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>You should see a pod and deployment with <code>seldon-controller-manager</code> in the name. This pod and deployment house the seldon-core operator, extends the kubernetes api. For now, just confirming that pod is running is all we need.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Build-example">
-<a class="anchor" href="#Build-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build example<a class="anchor-link" href="#Build-example"> </a>
+<h3 id="Define-Python-Component">
+<a class="anchor" href="#Define-Python-Component" aria-hidden="true"><span class="octicon octicon-link"></span></a>Define Python Component<a class="anchor-link" href="#Define-Python-Component"> </a>
 </h3>
 <p>I'm taking this example code directly from <a href="https://github.com/SeldonIO/seldon-core/blob/master/examples/models/sklearn_iris/sklearn_iris.ipynb">seldon-core irisClassifier example</a>. 
 This is a classic sklearn example we will be able to get up quick.</p>
@@ -623,7 +469,7 @@ This is a classic sklearn example we will be able to get up quick.</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>aa90858e167545291ed8a48d0f388e2c40158e33b9279bbfdb333d1c275aa6b6
+<pre>37d79dbbf6061564bb0e2db262db1dd9833da7baea988b8265a9a6441de8a9ea
 </pre>
 </div>
 </div>
@@ -834,13 +680,13 @@ First, let's take down the running docker container:</p>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>The push refers to repository [localhost:5000/iris_ex]
 
-874e9656: Preparing 
-3d8105d3: Preparing 
+cf9a18a9: Preparing 
+092e542c: Preparing 
 63f2d025: Preparing 
 f01300cf: Preparing 
 a0be9040: Preparing 
 1a837902: Preparing 
-874e9656: Pushed     276MB/269.6MBlatest: digest: sha256:f3e8d397c9bfeb77cfd5f09924d73d9dc0d82bec2260d77caa297f16a47b943c size: 1792
+cf9a18a9: Pushed     276MB/269.5MBlatest: digest: sha256:602c76df1dfcde2cfe5828443a2e780e715be1f88c5435fb5451a9760ae98a6c size: 1792
 </pre>
 </div>
 </div>
@@ -951,6 +797,23 @@ deployment "seldon-92a927e5e90d7602e08ba9b9304f70e8" successfully rolled out
 
 <div class="inner_cell">
     <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># dir(prediction_pb2_grpc) </span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">grpc</span> 
 <span class="kn">from</span> <span class="nn">seldon_core.proto</span> <span class="kn">import</span> <span class="n">prediction_pb2</span>
@@ -962,8 +825,9 @@ deployment "seldon-92a927e5e90d7602e08ba9b9304f70e8" successfully rolled out
 
 <span class="n">datadef</span> <span class="o">=</span> <span class="n">prediction_pb2</span><span class="o">.</span><span class="n">DefaultData</span><span class="p">(</span><span class="n">tensor</span><span class="o">=</span><span class="n">prediction_pb2</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
 <span class="n">request</span> <span class="o">=</span> <span class="n">prediction_pb2</span><span class="o">.</span><span class="n">SeldonMessage</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">datadef</span><span class="p">)</span>
-<span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="s2">"localhost:9000"</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
+<span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="s2">"localhost:9000/predict"</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
     <span class="n">stub</span> <span class="o">=</span> <span class="n">prediction_pb2_grpc</span><span class="o">.</span><span class="n">ModelStub</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">stub</span><span class="p">))</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="n">Predict</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
@@ -977,15 +841,23 @@ deployment "seldon-92a927e5e90d7602e08ba9b9304f70e8" successfully rolled out
 
 <div class="output_area">
 
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>['Predict', 'SendFeedback', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__']
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
 <div class="output_subarea output_text output_error">
 <pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">_InactiveRpcError</span>                         Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-18-3297b5eca058&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-intense-fg ansi-bold">     12</span> <span class="ansi-green-fg">with</span> grpc<span class="ansi-blue-fg">.</span>insecure_channel<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">"localhost:9000"</span><span class="ansi-blue-fg">)</span> <span class="ansi-green-fg">as</span> channel<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">&lt;ipython-input-47-3babe1b75c15&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
 <span class="ansi-green-intense-fg ansi-bold">     13</span>     stub <span class="ansi-blue-fg">=</span> prediction_pb2_grpc<span class="ansi-blue-fg">.</span>ModelStub<span class="ansi-blue-fg">(</span>channel<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-fg">---&gt; 14</span><span class="ansi-red-fg">     </span>response <span class="ansi-blue-fg">=</span> stub<span class="ansi-blue-fg">.</span>Predict<span class="ansi-blue-fg">(</span>request<span class="ansi-blue-fg">=</span>request<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     15</span> print<span class="ansi-blue-fg">(</span>response<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     14</span>     print<span class="ansi-blue-fg">(</span>dir<span class="ansi-blue-fg">(</span>stub<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">---&gt; 15</span><span class="ansi-red-fg">     </span>response <span class="ansi-blue-fg">=</span> stub<span class="ansi-blue-fg">.</span>Predict<span class="ansi-blue-fg">(</span>request<span class="ansi-blue-fg">=</span>request<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     16</span> print<span class="ansi-blue-fg">(</span>response<span class="ansi-blue-fg">)</span>
 
 <span class="ansi-green-fg">~/opt/anaconda3/envs/amp/lib/python3.7/site-packages/grpc/_channel.py</span> in <span class="ansi-cyan-fg">__call__</span><span class="ansi-blue-fg">(self, request, timeout, metadata, credentials, wait_for_ready, compression)</span>
 <span class="ansi-green-intense-fg ansi-bold">    824</span>         state, call, = self._blocking(request, timeout, metadata, credentials,
@@ -1004,7 +876,7 @@ deployment "seldon-92a927e5e90d7602e08ba9b9304f70e8" successfully rolled out
 <span class="ansi-red-fg">_InactiveRpcError</span>: &lt;_InactiveRpcError of RPC that terminated with:
 	status = StatusCode.UNAVAILABLE
 	details = "failed to connect to all addresses"
-	debug_error_string = "{"created":"@1596545783.222684000","description":"Failed to pick subchannel","file":"src/core/ext/filters/client_channel/client_channel.cc","file_line":3962,"referenced_errors":[{"created":"@1596545783.222683000","description":"failed to connect to all addresses","file":"src/core/ext/filters/client_channel/lb_policy/pick_first/pick_first.cc","file_line":394,"grpc_status":14}]}"
+	debug_error_string = "{"created":"@1596626969.097455000","description":"Failed to pick subchannel","file":"src/core/ext/filters/client_channel/client_channel.cc","file_line":3962,"referenced_errors":[{"created":"@1596626969.097454000","description":"failed to connect to all addresses","file":"src/core/ext/filters/client_channel/lb_policy/pick_first/pick_first.cc","file_line":394,"grpc_status":14}]}"
 &gt;</pre>
 </div>
 </div>
@@ -1038,38 +910,17 @@ deployment "seldon-92a927e5e90d7602e08ba9b9304f70e8" successfully rolled out
 </div>
 </div>
 
-</div>
-    
+<div class="output_wrapper">
+<div class="output">
 
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
+<div class="output_area">
 
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">)</span>
-</pre></div>
-
-    </div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>seldondeployment.machinelearning.seldon.io "seldon-deployment-example" deleted
+</pre>
 </div>
 </div>
 
-</div>
-    
-
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">grpc</span>
-<span class="nb">dir</span><span class="p">(</span><span class="n">grpc</span><span class="p">)</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
 
