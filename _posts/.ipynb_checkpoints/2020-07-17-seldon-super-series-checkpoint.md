@@ -2,13 +2,27 @@
 toc: true
 layout: post
 comments: true
-title: Learning Kubernetes Through Seldon
+title: Seldon Super Series
 description: Table of Contents for series of posts
 sticky_rank: 1
 categories: [markdown, seldon, kubernetes, python] 
 ---
-# Intro 
-I recently started working with with the [seldon-core](https://docs.seldon.io/projects/seldon-core/en/v1.1.0/) project. I am working on a team now that is developing an ML platform to allower researchers to quickly serve and monitor ML models at scale. Seldon-core is a fantastic tool to build on top of for this project. Seldon-core deploys models at scale by leveraging kubernetes. The only problem was, I had never used kubernetes before. 
+## Intro 
+I work on a team building an ML platform to allow researchers to deploy, monitor, and iterate on production machine learning models. The platform leverages [seldon-core](https://docs.seldon.io/projects/seldon-core/en/v1.1.0/), an open source platform to deploy scalable machine learning models on kubernetes. 
+Kubernetes is an intimidating subject. From the control-plane, to pods, to volumes, to everything else, there is always more you didn't even know you didn't know. My journey to getting familiar with kubernetes was learning through seldon-core. I had never used kubernetes before, but to leverage seldon, it is necessary. Over the past few months I've become comfortable developing, debugging, and deploying projects on a kubernetes cluster. 
+Seldon-core is a great project to build kubernetes knowledge around. It leverages some advanced kubernetes concepts under the hood, while remaining easy to use and powerful. Not to mention, it is much easier to build motivation around a subject when you are actually building, instead of just reading the documentation. 
+
+## Goals
+I am not a kubernetes expert, but I have become comfortable enough to be highly productive working with kubernetes. This comfort level was developed through muscle memory using common kubectl commands, learning the basics of kubernetes built-in objects vs custom resources, finding errors, and more. With that in mind, here are my goals: 
+* Main goal: Give readers a clear path to the "highly productive with kubernetes" level. 
+* Stretch goal: Have readers match my comfort level in only one week. 
+The Seldon Super Series is built around these goals. To do this, but I wrote this series that links all of the resources I found my most useful, along with some posts I wrote out to get my points across. I tried to only write posts for lessons I felt I learned mostly through doing, and did not find much good information online (not saying it isn't out there, just saying I couldn't find it).
+
+#### Who's it for? 
+The Seldon Super Series is for anyone interested in learning kubernetes, but even more so for those interested in leveraging a seldon-core. 
+
+#### How to get started
+If you are completely new to kubernetes, there is no better place to start than the [kubernetes interactive tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/). 
 
 1. [Launch a local kubernetes cluster](https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html) 
     * Get a local kubernetes cluster up and running so you can experiment locally! Important for those of us who don't have easy access to a remote cluster.
