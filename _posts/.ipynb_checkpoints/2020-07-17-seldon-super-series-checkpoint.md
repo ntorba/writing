@@ -16,13 +16,18 @@ Seldon-core is a great project to build kubernetes knowledge around. It leverage
 I am not a kubernetes expert, but I have become comfortable enough to be highly productive working with kubernetes. This comfort level was developed through muscle memory using common kubectl commands, learning the basics of kubernetes built-in objects vs custom resources, finding errors, and more. With that in mind, here are my goals: 
 * Main goal: Give readers a clear path to the "highly productive with kubernetes" level. 
 * Stretch goal: Have readers match my comfort level in only one week. 
-The Seldon Super Series is built around these goals. To do this, but I wrote this series that links all of the resources I found my most useful, along with some posts I wrote out to get my points across. I tried to only write posts for lessons I felt I learned mostly through doing, and did not find much good information online (not saying it isn't out there, just saying I couldn't find it).
+The Seldon Super Series is built around these goals. To do this, I wrote this series to lay out the resources I found my most useful along with some posts I wrote to show lessons I learned through trial and error.
 
 #### Who's it for? 
-The Seldon Super Series is for anyone interested in learning kubernetes, but even more so for those interested in leveraging a seldon-core. 
+This series is useful for anyone looking to build a deeper understanding of kubernetes. Seldon-core is just a great vehicle for this learning. If you are also interested in leveraging seldon, all the better!
+You can be a complete kubernetes beginner, or come with some familiarity. If you are already familiar with kubernetes, feel free to jump to posts further into the series that get into more complex material! 
+All of the examples throughout this tutorial are written in python. Most of the code examples are straightforward, with the focus on kubernetes and seldon, so even if you have a different preferred language, you should be able to following along just as well. 
+This series is useful for 
 
 #### How to get started
-If you are completely new to kubernetes, there is no better place to start than the [kubernetes interactive tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/). 
+If you are completely new to kubernetes, there is no better place to start than the [kubernetes interactive tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/). I suggest following this tutorial all the way through before getting started on anything else. It requires no install, no setup, and introduces fundamentals used when working with any app deployed on a cluster. 
+After that, I suggest following [Launch a local kubernetes cluster](https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html) to get a kubernetes cluster running on your local machine with [kind](https://kubernetes.io/docs/setup/learning-environment/kind/). If that doesn't work for you, there are many good resources available to get a cluster running on AWS or Google Cloud. Having a cluster to hack on is super imporant. You will not be able to build muscle memory without actually writing commands and debugging issues on your own setup. 
+Once you have a cluster to hack on, get started with [First Seldon Deployment](https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html). Even if you have previous seldon experience, I suggest starting, here, because many other posts will use this as a baseline to build on (don't worry if you don't start here, though, any post that does require some setup will make that clear).
 
 1. [Launch a local kubernetes cluster](https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html) 
     * Get a local kubernetes cluster up and running so you can experiment locally! Important for those of us who don't have easy access to a remote cluster.
@@ -46,16 +51,8 @@ If you are completely new to kubernetes, there is no better place to start than 
 
 # Why Seldon-core? 
 Seldon-core is an open source projects built by the London based startup [Seldon](https://www.seldon.io/). With seldon-core, you can use python (and java) to easily deploy ML models built in any framework at scale. However, they offer tools for more than just model serving. With seldon-core, you construct an inference graph. The inference graph is built with [these components](https://docs.seldon.io/projects/seldon-core/en/v1.1.0/python/python_component.html): 
-    * Model
-    * Transformer
-    * Combiner 
-    * Router
-These additional components add the ability to create much more than just a single model. You can set up custom A/B tests, or 1-armed bandit systems with the router, combine results from two different models with the combiner, and have independent components (which allows separate scale settings) to transform the input data. Seldon-core inference graphs are powerful! 
-
-# What's this series? 
-In order to take advantage of seldon-core, you need to become familiar with some basic kubernetes fundamentals, so that's what I did. First, I followed the [kubernetes interactive tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/) to get a handle. Then, I dove right into seldon deployments. Working with seldon-core and building implementations of projects is a great way to get the kubernetes basics down. At the start, I couldn't tell you the difference between a kubernetes deployment and a service. Although I'm not an expert now, I'm comfortable with seldon deployments, all the components they run on top of, and how to quickly debug my implementations by checking through the logs of containers scattered throughout the different components of my seldon deployments. 
-In this post, I link to, in order, posts I've written detailing the concepts and tools I learned to become confident in building and deploying at scale with seldon-core.
-
-    
-    
-
+* Model
+* Transformer
+* Combiner 
+* Router
+These additional components add the ability to create much more than just a single model. You can set up custom A/B tests, multi-armed bandits, scalable ensemble systems, and much more. In short, seldon-core inference graphs are powerful! 
