@@ -94,7 +94,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      5 min read
+      4 min read
     
 </span></p>
 
@@ -128,7 +128,6 @@ window.onload = wrap_img;
 </ul>
 </li>
 <li class="toc-entry toc-h1"><a href="#why-seldon-core">Why Seldon-core?</a></li>
-<li class="toc-entry toc-h1"><a href="#whats-this-series">What’s this series?</a></li>
 </ul><h2 id="intro">
 <a class="anchor" href="#intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro</h2>
 <p>I work on a team building an ML platform to allow researchers to deploy, monitor, and iterate on production machine learning models. The platform leverages <a href="https://docs.seldon.io/projects/seldon-core/en/v1.1.0/">seldon-core</a>, an open source platform to deploy scalable machine learning models on kubernetes. 
@@ -210,18 +209,14 @@ Once you have a cluster to hack on, get started with <a href="https://ntorba.git
 
 <h1 id="why-seldon-core">
 <a class="anchor" href="#why-seldon-core" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why Seldon-core?</h1>
-<p>Seldon-core is an open source projects built by the London based startup <a href="https://www.seldon.io/">Seldon</a>. With seldon-core, you can use python (and java) to easily deploy ML models built in any framework at scale. However, they offer tools for more than just model serving. With seldon-core, you construct an inference graph. The inference graph is built with <a href="https://docs.seldon.io/projects/seldon-core/en/v1.1.0/python/python_component.html">these components</a>: 
-    * Model
-    * Transformer
-    * Combiner 
-    * Router
-These additional components add the ability to create much more than just a single model. You can set up custom A/B tests, or 1-armed bandit systems with the router, combine results from two different models with the combiner, and have independent components (which allows separate scale settings) to transform the input data. Seldon-core inference graphs are powerful!</p>
-
-<h1 id="whats-this-series">
-<a class="anchor" href="#whats-this-series" aria-hidden="true"><span class="octicon octicon-link"></span></a>What’s this series?</h1>
-<p>In order to take advantage of seldon-core, you need to become familiar with some basic kubernetes fundamentals, so that’s what I did. First, I followed the <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/">kubernetes interactive tutorial</a> to get a handle. Then, I dove right into seldon deployments. Working with seldon-core and building implementations of projects is a great way to get the kubernetes basics down. At the start, I couldn’t tell you the difference between a kubernetes deployment and a service. Although I’m not an expert now, I’m comfortable with seldon deployments, all the components they run on top of, and how to quickly debug my implementations by checking through the logs of containers scattered throughout the different components of my seldon deployments. 
-In this post, I link to, in order, posts I’ve written detailing the concepts and tools I learned to become confident in building and deploying at scale with seldon-core.</p>
-
+<p>Seldon-core is an open source projects built by the London based startup <a href="https://www.seldon.io/">Seldon</a>. With seldon-core, you can use python (and java) to easily deploy ML models built in any framework at scale. However, they offer tools for more than just model serving. With seldon-core, you construct an inference graph. The inference graph is built with <a href="https://docs.seldon.io/projects/seldon-core/en/v1.1.0/python/python_component.html">these components</a>:</p>
+<ul>
+  <li>Model</li>
+  <li>Transformer</li>
+  <li>Combiner</li>
+  <li>Router
+These additional components add the ability to create much more than just a single model. You can set up custom A/B tests, multi-armed bandits, scalable ensemble systems, and much more. In short, seldon-core inference graphs are powerful!</li>
+</ul>
 
   </div><!-- from https://github.com/utterance/utterances -->
 <script src="https://utteranc.es/client.js"
