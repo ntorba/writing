@@ -137,24 +137,30 @@ Seldon-core is a great project to build kubernetes knowledge around. It leverage
 <h2 id="goals">
 <a class="anchor" href="#goals" aria-hidden="true"><span class="octicon octicon-link"></span></a>Goals</h2>
 <p>I am not a kubernetes expert, but I have become comfortable enough to be highly productive working with kubernetes. This comfort level was developed through muscle memory using common kubectl commands, learning the basics of kubernetes built-in objects vs custom resources, finding errors, and more. With that in mind, here are my goals:</p>
-<ul>
-  <li>Main goal: Give readers a clear path to the “highly productive with kubernetes” level.</li>
-  <li>Stretch goal: Have readers match my comfort level in only one week. 
-The Seldon Super Series is built around these goals. To do this, I wrote this series to lay out the resources I found my most useful along with some posts I wrote to show lessons I learned through trial and error.</li>
-</ul>
+<ol>
+  <li>Give readers a clear path to the “highly productive with kubernetes” level.</li>
+  <li>Have readers match my comfort level in only one week.</li>
+</ol>
+
+<p>To do this, the Seldon Super Series lays out a path providing the best resources I found along with new examples I wrote based on my learning experience.</p>
 
 <h4 id="whos-it-for">
 <a class="anchor" href="#whos-it-for" aria-hidden="true"><span class="octicon octicon-link"></span></a>Who’s it for?</h4>
-<p>This series is useful for anyone looking to build a deeper understanding of kubernetes. Seldon-core is just a great vehicle for this learning. If you are also interested in leveraging seldon, all the better!
+<p>This series is useful for programmers (preferably comfortable in python) looking to build a deeper understanding of kubernetes. Seldon-core is just a great vehicle for this learning. If you are also interested in leveraging seldon, all the better!
 You can be a complete kubernetes beginner, or come with some familiarity. If you are already familiar with kubernetes, feel free to jump to posts further into the series that get into more complex material! 
-All of the examples throughout this tutorial are written in python. Most of the code examples are straightforward, with the focus on kubernetes and seldon, so even if you have a different preferred language, you should be able to following along just as well. 
-This series is useful for</p>
+All of the examples throughout this tutorial are written in python. Most of the code examples are straightforward, with the focus on kubernetes and seldon, so even if you have a different preferred language, you should be able to following along just as well.</p>
 
 <h4 id="how-to-get-started">
 <a class="anchor" href="#how-to-get-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to get started</h4>
-<p>If you are completely new to kubernetes, there is no better place to start than the <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/">kubernetes interactive tutorial</a>. I suggest following this tutorial all the way through before getting started on anything else. It requires no install, no setup, and introduces fundamentals used when working with any app deployed on a cluster. 
-After that, I suggest following <a href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html">Launch a local kubernetes cluster</a> to get a kubernetes cluster running on your local machine with <a href="https://kubernetes.io/docs/setup/learning-environment/kind/">kind</a>. If that doesn’t work for you, there are many good resources available to get a cluster running on AWS or Google Cloud. Having a cluster to hack on is super imporant. You will not be able to build muscle memory without actually writing commands and debugging issues on your own setup. 
-Once you have a cluster to hack on, get started with <a href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html">First Seldon Deployment</a>. Even if you have previous seldon experience, I suggest starting, here, because many other posts will use this as a baseline to build on (don’t worry if you don’t start here, though, any post that does require some setup will make that clear).</p>
+<ul>
+  <li>If you are completely new to kubernetes, there is no better place to start than the <a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/">kubernetes interactive tutorial</a>. I suggest following this tutorial all the way through before getting started on anything else. It requires no install, no setup, and introduces fundamentals used when working with any app deployed on a cluster.</li>
+  <li>If you don’t have access to a kubernetes cluster, follow <a href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html">Launch a local kubernetes cluster</a> to get a kubernetes cluster running on your local machine with <a href="https://kubernetes.io/docs/setup/learning-environment/kind/">kind</a>. I suggest using kind because it is free and you can freely experiment with the comfort that it takes less than a minute to destroy and reboot your cluster at any time.
+    <ul>
+      <li>If that doesn’t work for you, there are many good resources available to get a cluster running on AWS or Google Cloud. You will have to pay for these, but you will only need a small cluster that will be fairly cheap</li>
+    </ul>
+  </li>
+  <li>Once you have a cluster to hack on, get started with <a href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html">First Seldon-core Microservice</a>. Even if you have previous seldon experience, I suggest starting, here, because many other posts will use this as a baseline to build on (don’t worry if you don’t start here, though, any post that does require some setup will make that clear).</li>
+</ul>
 
 <ol>
   <li>
@@ -164,7 +170,7 @@ Once you have a cluster to hack on, get started with <a href="https://ntorba.git
     </ul>
   </li>
   <li>
-<a href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html">First Seldon Deployment</a>
+<a href="https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html">First Seldon-core Microservice</a>
     <ul>
       <li>Deploy a model endpoint on kubernetes!</li>
     </ul>

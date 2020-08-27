@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Deploy First Microservice | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Deploy First Microservice" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Deploy your first microservice on kubernetes!" />
+<meta property="og:description" content="Deploy your first microservice on kubernetes!" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-08-27T00:00:00-05:00","description":"Deploy your first microservice on kubernetes!","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html","headline":"Deploy First Microservice","datePublished":"2020-08-27T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/writing/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/writing/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Deploy First Microservice | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Deploy First Microservice" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Deploy your first microservice on kubernetes!" />
+<meta property="og:description" content="Deploy your first microservice on kubernetes!" />
+<link rel="canonical" href="https://ntorba.github.io/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html" />
+<meta property="og:url" content="https://ntorba.github.io/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-27T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-08-27T00:00:00-05:00","description":"Deploy your first microservice on kubernetes!","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://ntorba.github.io/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html"},"url":"https://ntorba.github.io/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html","headline":"Deploy First Microservice","datePublished":"2020-08-27T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="https://ntorba.github.io/writing/feed.xml" title="Turbo" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    // remove paragraph tags in rendered toc (happens from notebooks)
+    var toctags = document.querySelectorAll(".toc-entry")
+    toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/writing/">Turbo</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/writing/about/">About</a><a class="page-link" href="/writing/search/">Search</a><a class="page-link" href="/writing/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Deploy First Microservice</h1><p class="page-description">Deploy your first microservice on kubernetes!</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-08-27T00:00:00-05:00" itemprop="datePublished">
+        Aug 27, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      3 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/writing/categories/#kubernetes">kubernetes</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/writing/categories/#docker">docker</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+<a href="https://github.com/ntorba/writing/tree/master/_notebooks/2020-08-27-deploy-first-microservice.ipynb" role="button">
+    <img class="notebook-badge-image" src="/writing/assets/badges/github.svg" alt="View On GitHub">
+</a>
+</div><div class="px-2">
+    <a href="https://colab.research.google.com/github/ntorba/writing/blob/master/_notebooks/2020-08-27-deploy-first-microservice.ipynb">
+        <img class="notebook-badge-image" src="/writing/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h3"><a href="#Pre-reqs">Pre-reqs </a></li>
+<li class="toc-entry toc-h3"><a href="#Goal">Goal </a>
+<ul>
+<li class="toc-entry toc-h4"><a href="#Steps">Steps </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h3"><a href="#Define-SeldonDeployment-yaml-file">Define SeldonDeployment yaml file </a></li>
+<li class="toc-entry toc-h3"><a href="#Conclusion">Conclusion </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2020-08-27-deploy-first-microservice.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Pre-reqs">
+<a class="anchor" href="#Pre-reqs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pre-reqs<a class="anchor-link" href="#Pre-reqs"> </a>
+</h3>
+<ul>
+<li><a href="">Build a Seldon-core Microservice</a></li>
+<li>
+<a href="https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html">Launch a local kubernetes cluster</a><ul>
+<li>or any other kubernetes cluster readily available</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Goal">
+<a class="anchor" href="#Goal" aria-hidden="true"><span class="octicon octicon-link"></span></a>Goal<a class="anchor-link" href="#Goal"> </a>
+</h3>
+<ul>
+<li>Deploy our docker image from <a href="">Build a Seldon-core Microservice</a> onto kubernetes!</li>
+</ul>
+<h4 id="Steps">
+<a class="anchor" href="#Steps" aria-hidden="true"><span class="octicon octicon-link"></span></a>Steps<a class="anchor-link" href="#Steps"> </a>
+</h4>
+<ol>
+<li>Define SeldonDeployment yaml file </li>
+<li>
+<code>kubectl apply</code> SeldonDeployment to the kubernetes cluster. </li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Define-SeldonDeployment-yaml-file">
+<a class="anchor" href="#Define-SeldonDeployment-yaml-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Define SeldonDeployment yaml file<a class="anchor-link" href="#Define-SeldonDeployment-yaml-file"> </a>
+</h3>
+<p>First, I show a completed seldon deployment configuration file. Under this file I walk through some of the important details to take take note of. 
+In this example, we are deploying a custom python component. Seldon-core also provides <a href="https://docs.seldon.io/projects/seldon-core/en/latest/servers/overview.html">pre-packaged model servers</a>, which allow you to get models up faster, but the concepts don't transfer as well to more complex inference graphs with other components.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%writefile</span> iris_classifier/sklearn_iris_deployment.yaml
+<span class="c1">#hide_output</span>
+<span class="n">apiVersion</span><span class="p">:</span> <span class="n">machinelearning</span><span class="o">.</span><span class="n">seldon</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">v1alpha2</span>
+<span class="n">kind</span><span class="p">:</span> <span class="n">SeldonDeployment</span>
+<span class="n">metadata</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">seldon</span><span class="o">-</span><span class="n">deployment</span><span class="o">-</span><span class="n">example</span>
+<span class="n">spec</span><span class="p">:</span>
+  <span class="n">name</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="o">-</span><span class="n">deployment</span>
+  <span class="n">predictors</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">componentSpecs</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">spec</span><span class="p">:</span>
+        <span class="n">containers</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">image</span><span class="p">:</span> <span class="n">seldonio</span><span class="o">/</span><span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="p">:</span><span class="mf">0.1</span>
+          <span class="n">imagePullPolicy</span><span class="p">:</span> <span class="n">IfNotPresent</span>
+          <span class="n">name</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="o">-</span><span class="n">classifier</span>
+    <span class="n">graph</span><span class="p">:</span>
+      <span class="n">children</span><span class="p">:</span> <span class="p">[]</span>
+      <span class="n">endpoint</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">REST</span>
+      <span class="n">name</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="o">-</span><span class="n">classifier</span>
+      <span class="nb">type</span><span class="p">:</span> <span class="n">MODEL</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">sklearn</span><span class="o">-</span><span class="n">iris</span><span class="o">-</span><span class="n">predictor</span>
+    <span class="n">replicas</span><span class="p">:</span> <span class="mi">1</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Some important notes about the deployment config:</p>
+<ul>
+<li>apiVersion: this sends out request to the appropriate endpoint of the kubernets api, which was installed by helm earlier in this tutorial<ul>
+<li>learn more about this in our <a href="">kubernetes posts</a>
+</li>
+</ul>
+</li>
+<li>kind: tells Kubernetes what kind of resource to create.<ul>
+<li>Because we installed seldon-core on our cluster, it recognizes SeldonDeployment as a custom resource</li>
+</ul>
+</li>
+<li>metadata: add labels, like name, to the deployment</li>
+<li>spec: <ul>
+<li>predictors: this is a list of predictors to deploy. It is a list because you have the option to create multiple inference graphs in the same spec. This is useful for things like Canary deployment, where you only want a new graph to recieve a small percentage of traffic<ul>
+<li>componentSpecs: add information about the containers that need to be pulled to create our graph. In our case, we only need a single containe to serve our model. If we were creating a more complex inference graph (maybe with a transformer, router, and another model, then we would need to include the docker containers that house them in this section)</li>
+<li>graph: this is where you define the flow of components. This is easy in our case, there is only one component so we define one endpoint with no children. If there were more compnoents, we would fill out the children componenets in the children attriubte of the head of the graph. Seldon graphs are built implicitly through the use of the children attribute of each node in the graph. </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>There is one last step to deploy our graph, we must push our docker container to a registry! I am running a local registry with my kind cluster, thanks to the script given <a href="https://kind.sigs.k8s.io/docs/user/local-registry/">here</a>. You can also push to DockerHub as well.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>docker push localhost:5000/iris_ex:latest
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With our docker image in a registry, it is available to our cluster, so we can deploy!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl apply -f iris_classifier/sklearn_iris_deployment.yaml
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># give the clsuter some to get the deployment running before executing the rollout</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can check the status of your deployment.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectl rollout status deploy/<span class="k">$(</span>kubectl get deploy -l seldon-deployment-id<span class="o">=</span>seldon-deployment-example <span class="err">\</span>
+                                 <span class="o">-</span><span class="n">o</span> <span class="n">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].metadata.name}'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Once the deployment is ready, you will need to port-forward the pod to your localhost in order check the request. That can be done wiht kubectl port-forward command</p>
+<div class="highlight"><pre><span></span>kubectl port-forward <span class="k">$(</span>kubectl get pods -l seldon-app<span class="o">=</span>seldon-deployment-example-sklearn-iris-predictor -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">'{.items[0].metadata.name}'</span><span class="k">)</span> <span class="m">9000</span>:9000
+</pre></div>
+<p>You must run this command in a separate window because it will need to run while we curl the endpoint.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">grpc</span> 
+<span class="kn">from</span> <span class="nn">seldon_core.proto</span> <span class="kn">import</span> <span class="n">prediction_pb2</span>
+<span class="kn">from</span> <span class="nn">seldon_core.proto</span> <span class="kn">import</span> <span class="n">prediction_pb2_grpc</span>
+
+
+<span class="c1">### Test REST endpoint</span>
+<span class="n">res</span> <span class="o">=</span> <span class="o">!</span>curl -s http://localhost:9000/predict -H <span class="s2">"Content-Type: application/json"</span> -d <span class="s1">'{"data":{"ndarray":[[5.964,4.006,2.081,1.031]]}}'</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Cleanup</span>
+<span class="o">!</span>kubectl delete -f sklearn_iris_deployment.yaml
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Conclusion">
+<a class="anchor" href="#Conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion<a class="anchor-link" href="#Conclusion"> </a>
+</h3>
+<p>In this quick example, we scratched the surface of seldon-core by deploying a simple model endpoint on kubernetes. 
+If you are hungry for more, chech out more of the posts in the <a href="">Seldon Super Series</a>. There, you can find notebooks similar to this that deploy more complex inference graphs, or dive into the underlying kubernetes concepts that seldon runs on top of!</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### Next Up</span>
+<span class="o">*</span> <span class="n">other</span> <span class="n">seldon</span> <span class="n">components</span> 
+<span class="o">*</span> <span class="n">seldon</span> <span class="n">graph</span> <span class="n">construction</span> 
+<span class="o">*</span> <span class="n">multi</span><span class="o">-</span><span class="n">component</span> <span class="n">inference</span> <span class="n">graph</span>
+<span class="o">*</span> <span class="n">operators</span> <span class="ow">and</span> <span class="n">custom</span> <span class="n">resources</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="ntorba/writing"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/writing/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/writing/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/writing/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Imma write some things here</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/ntorba" title="ntorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/nicktorba" title="nicktorba"><svg class="svg-icon grey"><use xlink:href="/writing/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
