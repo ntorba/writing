@@ -14,24 +14,25 @@ Seldon-core is a great project to build kubernetes knowledge around. It leverage
 
 ## Goals
 I am not a kubernetes expert, but I have become comfortable enough to be highly productive working with kubernetes. This comfort level was developed through muscle memory using common kubectl commands, learning the basics of kubernetes built-in objects vs custom resources, finding errors, and more. With that in mind, here are my goals: 
-* Main goal: Give readers a clear path to the "highly productive with kubernetes" level. 
-* Stretch goal: Have readers match my comfort level in only one week. 
-The Seldon Super Series is built around these goals. To do this, I wrote this series to lay out the resources I found my most useful along with some posts I wrote to show lessons I learned through trial and error.
+1. Give readers a clear path to the "highly productive with kubernetes" level. 
+2. Have readers match my comfort level in only one week. 
+
+To do this, the Seldon Super Series lays out a path providing the best resources I found along with new examples I wrote based on my learning experience. 
 
 #### Who's it for? 
-This series is useful for anyone looking to build a deeper understanding of kubernetes. Seldon-core is just a great vehicle for this learning. If you are also interested in leveraging seldon, all the better!
+This series is useful for programmers (preferably comfortable in python) looking to build a deeper understanding of kubernetes. Seldon-core is just a great vehicle for this learning. If you are also interested in leveraging seldon, all the better!
 You can be a complete kubernetes beginner, or come with some familiarity. If you are already familiar with kubernetes, feel free to jump to posts further into the series that get into more complex material! 
 All of the examples throughout this tutorial are written in python. Most of the code examples are straightforward, with the focus on kubernetes and seldon, so even if you have a different preferred language, you should be able to following along just as well. 
-This series is useful for 
 
 #### How to get started
-If you are completely new to kubernetes, there is no better place to start than the [kubernetes interactive tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/). I suggest following this tutorial all the way through before getting started on anything else. It requires no install, no setup, and introduces fundamentals used when working with any app deployed on a cluster. 
-After that, I suggest following [Launch a local kubernetes cluster](https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html) to get a kubernetes cluster running on your local machine with [kind](https://kubernetes.io/docs/setup/learning-environment/kind/). If that doesn't work for you, there are many good resources available to get a cluster running on AWS or Google Cloud. Having a cluster to hack on is super imporant. You will not be able to build muscle memory without actually writing commands and debugging issues on your own setup. 
-Once you have a cluster to hack on, get started with [First Seldon Deployment](https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html). Even if you have previous seldon experience, I suggest starting, here, because many other posts will use this as a baseline to build on (don't worry if you don't start here, though, any post that does require some setup will make that clear).
+* If you are completely new to kubernetes, there is no better place to start than the [kubernetes interactive tutorial](https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/). I suggest following this tutorial all the way through before getting started on anything else. It requires no install, no setup, and introduces fundamentals used when working with any app deployed on a cluster. 
+* If you don't have access to a kubernetes cluster, follow [Launch a local kubernetes cluster](https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html) to get a kubernetes cluster running on your local machine with [kind](https://kubernetes.io/docs/setup/learning-environment/kind/). I suggest using kind because it is free and you can freely experiment with the comfort that it takes less than a minute to destroy and reboot your cluster at any time. 
+    * If that doesn't work for you, there are many good resources available to get a cluster running on AWS or Google Cloud. You will have to pay for these, but you will only need a small cluster that will be fairly cheap 
+* Once you have a cluster to hack on, get started with [First Seldon-core Microservice](https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html). Even if you have previous seldon experience, I suggest starting, here, because many other posts will use this as a baseline to build on (don't worry if you don't start here, though, any post that does require some setup will make that clear). 
 
 1. [Launch a local kubernetes cluster](https://ntorba.github.io/writing/jupyter/2020/07/17/local-kubernetes.html) 
     * Get a local kubernetes cluster up and running so you can experiment locally! Important for those of us who don't have easy access to a remote cluster.
-2. [First Seldon Deployment](https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html)
+2. [First Seldon-core Microservice](https://ntorba.github.io/writing/kubernetes/docker/2020/07/30/first-seldon-deployment.html)
     * Deploy a model endpoint on kubernetes!
 3. [Multi-component Seldon Deployment]()
     * Use multiple seldon-core components to deploy and inference graph!
