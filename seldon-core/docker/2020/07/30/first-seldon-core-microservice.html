@@ -512,10 +512,7 @@ Next, we define seldon specific variables.</p>
 <h3 id="Test-Image">
 <a class="anchor" href="#Test-Image" aria-hidden="true"><span class="octicon octicon-link"></span></a>Test Image<a class="anchor-link" href="#Test-Image"> </a>
 </h3>
-<p>You can test your newly created image by running the image and hitting the endpoint. 
-You may ask yourself at this point, "if I have a working docker image, what do I need kubernetes for?" 
-This is a great question. For simple use cases, this docker image itself is all you need, and you could run it as a standalone service. If the load is small and you can run it without any load balancing functionalities, you are good to go. 
-However, kubernetes is a container orchestration engine. That means it is built to handle complex containerized applications and will make your life much easier if you need to handle more complex operations for applications that need to serve on a large scale.</p>
+<p>Test the newly created docker image by running a container and hitting the endpoint!</p>
 
 </div>
 </div>
@@ -626,11 +623,14 @@ Use the next command to stop the running docker container:</p>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>If you are like me, you are a bit surprised at just how easy it was to create this. That is the power of seldon.</p>
-<p>You may be wondering, what about kubernetes? Didn't your first post in this series say that you must have access to a cluster? That is still correct, and you will need that cluster in the following posts. I just like to start with this piece because it is straightforward and a rewarding way to start.</p>
+<p>You may also ask yourself, "if I have a working docker image, what do I need kubernetes for?" 
+This is a great question. For simple use cases, this docker image itself is all you need, and you could run it as a standalone service. If the load is small and you can run it without any load balancing functionalities, you are good to go. 
+However, kubernetes is a container orchestration engine. That means it is built to handle complex containerized applications and will make your life much easier if you need to handle more complex operations for applications that need to serve on a large scale.</p>
+<p>You may also wonder, I thought this series was to learn about kubernets? Don't worry, it is. This post is meant to serve. as the jumping off point for much more detail about kubernetes. Kubernetes is useless unless you have container based microservices to run on it. This is also a straightforward and a rewarding way to start.</p>
 <p>At this stage you are prepared to move onto any of these posts:</p>
 <ul>
 <li>
-<a href="">Deploy First Microservice</a><ul>
+<a href="https://ntorba.github.io/writing/kubernetes/docker/2020/08/27/deploy-first-microservice.html">Deploy First Microservice</a><ul>
 <li>This post is for those excited to deploy your new docker image on kubernetes! </li>
 </ul>
 </li>
