@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Building a Python Kubernetes Client | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Building a Python Kubernetes Client" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Building a simple python kubernetes client mimicing kubectl" />
+<meta property="og:description" content="Building a simple python kubernetes client mimicing kubectl" />
+<link rel="canonical" href="http://drafts.nicktorba.com/kubernetes/python/2020/09/13/Building_PyKubeCtl.html" />
+<meta property="og:url" content="http://drafts.nicktorba.com/kubernetes/python/2020/09/13/Building_PyKubeCtl.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-13T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-09-13T00:00:00-05:00","description":"Building a simple python kubernetes client mimicing kubectl","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://drafts.nicktorba.com/kubernetes/python/2020/09/13/Building_PyKubeCtl.html"},"url":"http://drafts.nicktorba.com/kubernetes/python/2020/09/13/Building_PyKubeCtl.html","headline":"Building a Python Kubernetes Client","datePublished":"2020-09-13T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://drafts.nicktorba.com/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Building a Python Kubernetes Client | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Building a Python Kubernetes Client" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Building a simple python kubernetes client mimicing kubectl" />
+<meta property="og:description" content="Building a simple python kubernetes client mimicing kubectl" />
+<link rel="canonical" href="http://drafts.nicktorba.com/kubernetes/python/2020/09/13/Building_PyKubeCtl.html" />
+<meta property="og:url" content="http://drafts.nicktorba.com/kubernetes/python/2020/09/13/Building_PyKubeCtl.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-13T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-09-13T00:00:00-05:00","description":"Building a simple python kubernetes client mimicing kubectl","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://drafts.nicktorba.com/kubernetes/python/2020/09/13/Building_PyKubeCtl.html"},"url":"http://drafts.nicktorba.com/kubernetes/python/2020/09/13/Building_PyKubeCtl.html","headline":"Building a Python Kubernetes Client","datePublished":"2020-09-13T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="http://drafts.nicktorba.com/feed.xml" title="Turbo" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    // remove paragraph tags in rendered toc (happens from notebooks)
+    var toctags = document.querySelectorAll(".toc-entry")
+    toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Turbo</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Building a Python Kubernetes Client</h1><p class="page-description">Building a simple python kubernetes client mimicing `kubectl`</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-09-13T00:00:00-05:00" itemprop="datePublished">
+        Sep 13, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/categories/#kubernetes">kubernetes</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#python">python</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+<a href="https://github.com/ntorba/writing/tree/master/_notebooks/Building_PyKubeCtl.ipynb" role="button">
+    <img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+</a>
+</div><div class="px-2">
+    <a href="https://colab.research.google.com/github/ntorba/writing/blob/master/_notebooks/Building_PyKubeCtl.ipynb">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h3"><a href="#Why-bother">Why bother </a></li>
+<li class="toc-entry toc-h3"><a href="#Brainstorm">Brainstorm </a></li>
+<li class="toc-entry toc-h3"><a href="#Process">Process </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/Building_PyKubeCtl.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Why-bother">
+<a class="anchor" href="#Why-bother" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why bother<a class="anchor-link" href="#Why-bother"> </a>
+</h3>
+<p>I don't like the current official kubernetes python client. When using it, I get frustrated that it doesn't feel much more like <code>kubectl</code>. I thought it should look something like this:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pykubectl</span> <span class="kn">import</span> <span class="n">Kubectl</span>
+<span class="n">kubectl</span> <span class="o">=</span> <span class="n">Kubectl</span><span class="p">()</span>
+<span class="n">kubectl</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="s2">"path/to/file.json or yaml"</span><span class="p">)</span>
+</pre></div>
+<p>but instead it looks like this:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">kubernetes</span> <span class="kn">import</span> <span class="n">client</span><span class="p">,</span> <span class="n">config</span>
+<span class="n">config</span><span class="o">.</span><span class="n">load_kube_config</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"nginx-deployment.yaml"</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">dep</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">k8s_apps_v1</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">AppsV1Api</span><span class="p">()</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">k8s_apps_v1</span><span class="o">.</span><span class="n">create_namespaced_deployment</span><span class="p">(</span>
+        <span class="n">body</span><span class="o">=</span><span class="n">dep</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s2">"default"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Deployment created. status='</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="n">resp</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+<p>And if I wanted to create a custom resource intead, I can't edit the deployment file. I would need to create an entirely new client object. This is fine, but when you use <code>kubectl</code>, you don't have to do that much extra work. Why is it built like this? 
+I figured the best way to figure this out is to try to build my own client and see what led to this current client.</p>
+<h3 id="Brainstorm">
+<a class="anchor" href="#Brainstorm" aria-hidden="true"><span class="octicon octicon-link"></span></a>Brainstorm<a class="anchor-link" href="#Brainstorm"> </a>
+</h3>
+<p>What I know so far</p>
+<ol>
+<li>Kubernetes recieves commands entirely based on the <a href="https://kubernetes.io/docs/concepts/overview/kubernetes-api/">kubernetes rest api</a><ul>
+<li>all commands, internal and external, are handled through this api </li>
+<li>kubectl works by creating appropriate rest requests for each command </li>
+</ul>
+</li>
+<li>
+<code>kubectl apply -f fpath</code> with only a file supplied as an argument, and it's great. <ul>
+<li>even for custom resource deployments like seldon or ambassador, all you need to do is supply the file and kubectl figures the rest out for you.. why doesn't python client copy that pattern? </li>
+<li>kubectl is also written in go (which I don't know) and looks pretty complex, so there's that</li>
+</ul>
+</li>
+<li>The KUBECONFIG environment var tells me how to connect to the cluster <ul>
+<li>the kubeconfig file has a certificate-authority-data field for the cluster, along with a key and other value for each user, but I'm unsure how those are useful</li>
+</ul>
+</li>
+<li>Kubernetes auth is hard. I'm not sure how <code>kubectl</code> connects to the cluster</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Process">
+<a class="anchor" href="#Process" aria-hidden="true"><span class="octicon octicon-link"></span></a>Process<a class="anchor-link" href="#Process"> </a>
+</h3>
+<ol>
+<li>I have the current kubernes client cloned so I can add breakpoints and step through <a href="https://github.com/kubernetes-client/python/tree/master/examples">current examples</a>. I did this to see what their api requests look like. <ul>
+<li>I also had the kubectl-proxy running on my local host 
+I used this process to investigate their post request for doing something like listing running pods on the cluster. 
+First, to get the cluster server url, I build a little func to get info from the kubeconfig. Then, I just tried to hit the url with a GET request, like <a href="https://kubernetes.io/docs/reference/using-api/api-concepts/">this example</a>: <code>GET /api/v1/namespaces/test/pods</code>
+I was running this on a kind cluster, so I thought the auth might be a little more relaxed. </li>
+</ul>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="k">def</span> <span class="nf">get_current</span><span class="p">(</span><span class="n">cluster_list</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cluster_list</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">==</span> <span class="n">context</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"No match!"</span><span class="p">)</span>
+        
+<span class="k">def</span> <span class="nf">get_cluster</span><span class="p">():</span>
+    <span class="n">kubeconfig</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"KUBECONFIG"</span><span class="p">]</span>
+    <span class="n">kubeconfig</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">kubeconfig</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">cluster</span> <span class="o">=</span> <span class="n">get_current</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">"clusters"</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">"current-context"</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">cluster</span> 
+
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">get_cluster</span><span class="p">()</span>
+<span class="n">get_pods_path</span> <span class="o">=</span> <span class="s2">"/api/v1/namespaces/default/pods"</span>
+<span class="n">url</span> <span class="o">=</span> <span class="n">cluster</span><span class="p">[</span><span class="s2">"cluster"</span><span class="p">][</span><span class="s2">"server"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"/api"</span>
+
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'Accept'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">,</span> <span class="s1">'User-Agent'</span><span class="p">:</span> <span class="n">cluster</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]}</span> <span class="c1">#, 'authorization': f'Bearer {token}', 'Content-Type': 'application/json'}</span>
+<span class="c1"># headers = {'Accept': 'application/json', 'User-Agent': 'OpenAPI-Generator/12.0.0-snapshot/python', 'authorization': f'Bearer {content}', 'Content-Type': 'application/json'}</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>{"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"forbidden: User \"system:anonymous\" cannot get path \"/api\"","reason":"Forbidden","details":{},"code":403}
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/Users/ntorba605/opt/anaconda3/envs/amp1/lib/python3.7/site-packages/urllib3/connectionpool.py:988: InsecureRequestWarning: Unverified HTTPS request is being made to host '127.0.0.1'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#ssl-warnings
+  InsecureRequestWarning,
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Even with the <code>verify=False</code> arg, it is clear that kubernetes is smart enough to not let us get info about it. Clearly, even when running a local cluster, you need more advanced auth to be able to request info from your cluster. 
+Looking further into the <a href="https://requests.readthedocs.io/en/master/user/advanced/">python request docs</a>, we see that although we can set verify=False on the client-side, kubernetes rejects our request because the cluster doesn't care whether or not we verify it.. it needs to be able to verify us. The info to do that must be available in the kubeconfig file, otherwise <code>kubectl</code> wouldn't be able to run commands on the cluster.
+However, looking furhter into the requests and doing a fair amount of googling, I couldn't find any examples of people using the requests library to launch commands on kubernetes.</p>
+<p>So, I looked into the current python client to see how they did it.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ol>
+<li>
+<p>Doing auth is way fucking harder than I expected it to be. 2 hours in... still haven't figured out how to do the SSL auth... I fucking hate programming</p>
+</li>
+<li>
+<p>So I came across this page: <a href="https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/">https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/</a>, which has commands that are also used in this video: <a href="https://www.youtube.com/watch?v=dAUJ3TBwDWo">https://www.youtube.com/watch?v=dAUJ3TBwDWo</a></p>
+<ul>
+<li>What I found is how to actually grab the token that we need from the server to make requests, but this <strong>still really bothers me</strong> because I need to use <code>kubectl</code> to get his token... which means that kubectl is doing some other kind of authentication... </li>
+</ul>
+</li>
+<li>
+<p>I found the magic sauce. It is the FileOrData class from GitHub/python/kubernetes/config/kube_config.py. This class is used to create the ssl_ca_cert, cert_file, and key_file to create a custom urllib3.PoolManager, which is what the kubernetes-client is doing behind the scenes</p>
+<ul>
+<li>The urllib3.PoolManager is the preferred option when you need custom auth to make authenticated requests</li>
+<li>Using this code allows me to bypass getting the token from the kubectl command, but I need to actually understand what this code is doing... </li>
+</ul>
+</li>
+<li>
+<p>I created the <code>get_current</code> function to very simple mimic the KubeConfigNode class to pass to <code>class DataOrFile</code>, and I adjusted the DataOrFile class to be be used with my simple dictionary</p>
+<ul>
+<li>This class is used to create a security bundle to instantiate an authenticated PoolManager (this is done in <code>authenticated_rest.py</code>) </li>
+<li>I figured this out by stepping through the kubernetes python client code over and over again to see what was being passed to those functions, which is the information that is in the kubeconfig for user and for the cluster<ul>
+<li>I am a user on the cluster, which is what the client-certificate and client-key are used for (they are in the user section of the kubeconfig </li>
+<li>urllib3 docs on this bundle here: <a href="https://urllib3.readthedocs.io/en/latest/advanced-usage.html">https://urllib3.readthedocs.io/en/latest/advanced-usage.html</a>, under the Client Certificates section</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="n">kubeconfig</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"KUBECONFIG"</span><span class="p">]</span>
+<span class="n">kubeconfig</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">kubeconfig</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">config</span><span class="p">[</span><span class="s2">"current-context"</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_current</span><span class="p">(</span><span class="n">cluster_list</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cluster_list</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">==</span> <span class="n">context</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"No match!"</span><span class="p">)</span>
+<span class="n">cluster</span> <span class="o">=</span> <span class="n">get_current</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">"clusters"</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">"current-context"</span><span class="p">])</span>
+<span class="n">cluster</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">certifi</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">urllib3</span>
+<span class="kn">import</span> <span class="nn">ssl</span> 
+<span class="kn">import</span> <span class="nn">certifi</span>
+<span class="c1"># pool_manager = urllib3.PoolManager(</span>
+<span class="c1">#     num_pools=4,</span>
+<span class="c1">#     maxsize=4,</span>
+<span class="c1">#     cert_reqs=ssl.CERT_REQUIRED,</span>
+<span class="c1">#     ca_certs=certifi.where(),</span>
+<span class="c1">#     cert_file=None,</span>
+<span class="c1">#     key_file=None,</span>
+<span class="c1"># )</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">base64</span>
+<span class="n">TOKEN</span> <span class="o">=</span> <span class="s2">"k8s-aws-v1.aHR0cHM6Ly9zdHMudXMtZWFzdC0xLmFtYXpvbmF3cy5jb20vP0FjdGlvbj1HZXRDYWxsZXJJZGVudGl0eSZWZXJzaW9uPTIwMTEtMDYtMTUmWC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BU0lBM1JHTlg2V1BEWkhaRFhOQiUyRjIwMjAwOTAzJTJGdXMtZWFzdC0xJTJGc3RzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyMDA5MDNUMTM1ODE3WiZYLUFtei1FeHBpcmVzPTYwJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCUzQngtazhzLWF3cy1pZCZYLUFtei1TZWN1cml0eS1Ub2tlbj1Gd29HWlhJdllYZHpFTCUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRndFYURPTWRiNzM1NFBCMmlmRjVraUxuQWY4Q3dUaUY4NWQwUkV6ZyUyQk4lMkZodm90TmVJd0pBSFRsNDRVSlIzd2UlMkZEaGNHWmw5QTFOSTBOR01tM2E1YSUyQldjRURjbWVVWldSYlElMkYyNkJhcDJnNk9oNHZLMmVuajQ1YlB6d2ZBT2N2SGpPVGRvdnhZdFVLQ0U2RGZPJTJGM29YU3NxJTJCZG1tY3I0d0NFR09tajB1dTFIWnNCRSUyRmclMkZkJTJGRmg1eUk1SjUzJTJCdFUybHpyVE1uSERUdlFmNTY4VlZtWlhuZVcxN2YxbVc4UWYlMkZsdlhWVTNhJTJCdGpSbUsyUzJjdk5oVWJEclBmckclMkZmU3kxeUZ2eHQxY2wwcmZiaHJ3ZzU0RHdLNGZpSTEyRTRpb0puMGhuc3hMU2FsaWYlMkJVVFJQRFFXJTJCWVZEQWFQUEV2JTJGTHpLM1pMUU1neXlpRDJjUDZCVEl5UmI2bTNYVDVLMEJZSkVSQjZzZXR3T2s5UDBMYVBrc09LOGcxc0Jrbm1MTjJRSjVxYmo4Y2tkTjVUJTJGM0Q5eUVFMWNvJTNEJlgtQW16LVNpZ25hdHVyZT1iOTZhNGVhYWM0OGViYjc0NmRjMzk5NDI3NTU2NDg1NGExMzg0NmQ0MDM2ZmYzNTJmZjI1ZDExNGVjM2IzMzBl"</span>
+
+<span class="n">content</span> <span class="o">=</span> <span class="n">TOKEN</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">standard_b64decode</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+<span class="n">content</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## THIS LINE GRABS THE TOKEN I NEED FOR THE HEADER TO GET AUTHENTICATED!!! </span>
+<span class="o">!</span>kubectl get secrets -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s2">"{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='default')].data.token}"</span><span class="p">|</span>base64 --decode
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_pods_path</span> <span class="o">=</span> <span class="s2">"/api/v1/namespaces/default/pods"</span>
+<span class="n">url</span> <span class="o">=</span> <span class="n">cluster</span><span class="p">[</span><span class="s2">"cluster"</span><span class="p">][</span><span class="s2">"server"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"/api"</span>
+
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="n">token</span> <span class="o">=</span> <span class="s2">"eyJhbGciOiJSUzI1NiIsImtpZCI6Im1vNXpWUWxvdnA1cGF3MW1uTU05dldBX1BMYnJKMjBNSXl5bEhhemtvRlUifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tcDk5Z3YiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjJmYmUzOTJkLTk4OWQtNDcyMC1hODkxLTJkMzVmYjk2ZTRiMiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.NiWZlkUqDj6RQTyONA4d8KfU2qoNpaGwYqeWIrIeGcrBF3uIAa8Op-g26CxPYJ_NIf8ETeId4DJi7pBEM61vyCzes3HI3Xk0IxrOdc9-qbYxr8jcwdCZYqYKg1X9Su8XdnqQI7UTdxIYCJ-EHHtM5nnwilxYOyep6MZClDu02sW__eVIOG0z4H1p2JbEsG2--WiH2W_c7pt-nmQwAubQuN-R2DELR6XMej7o50eU6HoE7SI-A5YgnaC4quTJSZZOze6ziSiUo8olq6nF47wak9d0A898j5JaeCyHbQeFyd3XD4KJl1ZbsBW4jFSRsZAs3kckU0qTKsZY7KKhBGwWoA"</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'Accept'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">,</span> <span class="s1">'User-Agent'</span><span class="p">:</span> <span class="n">cluster</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="s1">'authorization'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'Bearer </span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'Content-Type'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">}</span>
+<span class="c1"># headers = {'Accept': 'application/json', 'User-Agent': 'OpenAPI-Generator/12.0.0-snapshot/python', 'authorization': f'Bearer {content}', 'Content-Type': 'application/json'}</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># help(requests.get)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">kubernetes</span> <span class="kn">import</span> <span class="n">client</span><span class="p">,</span> <span class="n">config</span>
+<span class="n">config</span><span class="o">.</span><span class="n">load_kube_config</span><span class="p">()</span>
+<span class="n">client</span><span class="o">.</span><span class="n">api_client</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">CoreV1Api</span><span class="p">()</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'Accept'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">,</span> <span class="s1">'User-Agent'</span><span class="p">:</span> <span class="s1">'OpenAPI-Generator/12.0.0-snapshot/python'</span><span class="p">,</span> <span class="s1">'authorization'</span><span class="p">:</span> <span class="s1">'Bearer k8s-aws-v1.aHR0cHM6Ly9zdHMudXMtZWFzdC0xLmFtYXpvbmF3cy5jb20vP0FjdGlvbj1HZXRDYWxsZXJJZGVudGl0eSZWZXJzaW9uPTIwMTEtMDYtMTUmWC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BU0lBM1JHTlg2V1BEWkhaRFhOQiUyRjIwMjAwOTAzJTJGdXMtZWFzdC0xJTJGc3RzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyMDA5MDNUMTUyMTU5WiZYLUFtei1FeHBpcmVzPTYwJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCUzQngtazhzLWF3cy1pZCZYLUFtei1TZWN1cml0eS1Ub2tlbj1Gd29HWlhJdllYZHpFTCUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRndFYURPTWRiNzM1NFBCMmlmRjVraUxuQWY4Q3dUaUY4NWQwUkV6ZyUyQk4lMkZodm90TmVJd0pBSFRsNDRVSlIzd2UlMkZEaGNHWmw5QTFOSTBOR01tM2E1YSUyQldjRURjbWVVWldSYlElMkYyNkJhcDJnNk9oNHZLMmVuajQ1YlB6d2ZBT2N2SGpPVGRvdnhZdFVLQ0U2RGZPJTJGM29YU3NxJTJCZG1tY3I0d0NFR09tajB1dTFIWnNCRSUyRmclMkZkJTJGRmg1eUk1SjUzJTJCdFUybHpyVE1uSERUdlFmNTY4VlZtWlhuZVcxN2YxbVc4UWYlMkZsdlhWVTNhJTJCdGpSbUsyUzJjdk5oVWJEclBmckclMkZmU3kxeUZ2eHQxY2wwcmZiaHJ3ZzU0RHdLNGZpSTEyRTRpb0puMGhuc3hMU2FsaWYlMkJVVFJQRFFXJTJCWVZEQWFQUEV2JTJGTHpLM1pMUU1neXlpRDJjUDZCVEl5UmI2bTNYVDVLMEJZSkVSQjZzZXR3T2s5UDBMYVBrc09LOGcxc0Jrbm1MTjJRSjVxYmo4Y2tkTjVUJTJGM0Q5eUVFMWNvJTNEJlgtQW16LVNpZ25hdHVyZT04YzJlZmQ1N2I5MWFhYTQ2OTg0OTMwZjFiN2Q3NjUwMDdkMGQ5ZWZhMzg3OGM0Yjk5NjlkYjdkZTEzNTg1YzJm'</span><span class="p">,</span> <span class="s1">'Content-Type'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">}</span>
+<span class="n">timeout</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">query_params</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">api_client</span><span class="o">.</span><span class="n">rest_client</span><span class="o">.</span><span class="n">pool_manager</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+    <span class="s2">"GET"</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">,</span>
+    <span class="n">preload_content</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">body</span><span class="o">=</span><span class="p">{},</span>
+    <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> 
+    <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">kubernetes</span> <span class="kn">import</span> <span class="n">client</span><span class="p">,</span> <span class="n">config</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">dir</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">kube_config</span><span class="o">.</span><span class="n">Configuration</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">kubernetes</span> <span class="kn">import</span> <span class="n">client</span><span class="p">,</span> <span class="n">config</span>
+
+
+<span class="c1"># Configs can be set in Configuration class directly or using helper</span>
+<span class="c1"># utility. If no argument provided, the config will be loaded from</span>
+<span class="c1"># default location.</span>
+<span class="n">config</span><span class="o">.</span><span class="n">load_kube_config</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Supported APIs (* is preferred version):"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">%-40s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span>
+      <span class="p">(</span><span class="s2">"core"</span><span class="p">,</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">CoreApi</span><span class="p">()</span><span class="o">.</span><span class="n">get_api_versions</span><span class="p">()</span><span class="o">.</span><span class="n">versions</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">api</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">ApisApi</span><span class="p">()</span><span class="o">.</span><span class="n">get_api_versions</span><span class="p">()</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+    <span class="n">versions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">api</span><span class="o">.</span><span class="n">versions</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="n">api</span><span class="o">.</span><span class="n">preferred_version</span><span class="o">.</span><span class="n">version</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">api</span><span class="o">.</span><span class="n">versions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">+=</span> <span class="s2">"*"</span>
+        <span class="n">name</span> <span class="o">+=</span> <span class="n">v</span><span class="o">.</span><span class="n">version</span>
+        <span class="n">versions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="si">%-40s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">versions</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'Accept'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">,</span> <span class="s1">'User-Agent'</span><span class="p">:</span> <span class="s1">'OpenAPI-Generator/12.0.0-snapshot/python'</span><span class="p">,</span> <span class="s1">'authorization'</span><span class="p">:</span> <span class="s1">'Bearer k8s-aws-v1.aHR0cHM6Ly9zdHMudXMtZWFzdC0xLmFtYXpvbmF3cy5jb20vP0FjdGlvbj1HZXRDYWxsZXJJZGVudGl0eSZWZXJzaW9uPTIwMTEtMDYtMTUmWC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BU0lBM1JHTlg2V1BEWkhaRFhOQiUyRjIwMjAwOTAzJTJGdXMtZWFzdC0xJTJGc3RzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyMDA5MDNUMTUyMTU5WiZYLUFtei1FeHBpcmVzPTYwJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCUzQngtazhzLWF3cy1pZCZYLUFtei1TZWN1cml0eS1Ub2tlbj1Gd29HWlhJdllYZHpFTCUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRiUyRndFYURPTWRiNzM1NFBCMmlmRjVraUxuQWY4Q3dUaUY4NWQwUkV6ZyUyQk4lMkZodm90TmVJd0pBSFRsNDRVSlIzd2UlMkZEaGNHWmw5QTFOSTBOR01tM2E1YSUyQldjRURjbWVVWldSYlElMkYyNkJhcDJnNk9oNHZLMmVuajQ1YlB6d2ZBT2N2SGpPVGRvdnhZdFVLQ0U2RGZPJTJGM29YU3NxJTJCZG1tY3I0d0NFR09tajB1dTFIWnNCRSUyRmclMkZkJTJGRmg1eUk1SjUzJTJCdFUybHpyVE1uSERUdlFmNTY4VlZtWlhuZVcxN2YxbVc4UWYlMkZsdlhWVTNhJTJCdGpSbUsyUzJjdk5oVWJEclBmckclMkZmU3kxeUZ2eHQxY2wwcmZiaHJ3ZzU0RHdLNGZpSTEyRTRpb0puMGhuc3hMU2FsaWYlMkJVVFJQRFFXJTJCWVZEQWFQUEV2JTJGTHpLM1pMUU1neXlpRDJjUDZCVEl5UmI2bTNYVDVLMEJZSkVSQjZzZXR3T2s5UDBMYVBrc09LOGcxc0Jrbm1MTjJRSjVxYmo4Y2tkTjVUJTJGM0Q5eUVFMWNvJTNEJlgtQW16LVNpZ25hdHVyZT04YzJlZmQ1N2I5MWFhYTQ2OTg0OTMwZjFiN2Q3NjUwMDdkMGQ5ZWZhMzg3OGM0Yjk5NjlkYjdkZTEzNTg1YzJm'</span><span class="p">,</span> <span class="s1">'Content-Type'</span><span class="p">:</span> <span class="s1">'application/json'</span><span class="p">}</span>
+<span class="n">_preload_content</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">timeout</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">query_params</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://2AC6C9C829888AF237C2E11472EFC08E.yl4.us-east-1.eks.amazonaws.com/api/'</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">urllib3.PoolManager</span>
+<span class="n">help</span><span class="p">(</span><span class="n">urllib3</span><span class="o">.</span><span class="n">PoolManager</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">config</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">dir</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">dir</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">kube_config</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="ntorba/writing"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/kubernetes/python/2020/09/13/Building_PyKubeCtl.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Imma write some things here</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/ntorba" title="ntorba"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/nicktorba" title="nicktorba"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

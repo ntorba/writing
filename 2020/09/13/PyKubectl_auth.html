@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Title | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Title" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Imma write some things here" />
+<meta property="og:description" content="Imma write some things here" />
+<link rel="canonical" href="http://drafts.nicktorba.com/2020/09/13/PyKubectl_auth.html" />
+<meta property="og:url" content="http://drafts.nicktorba.com/2020/09/13/PyKubectl_auth.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-13T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-09-13T00:00:00-05:00","description":"Imma write some things here","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://drafts.nicktorba.com/2020/09/13/PyKubectl_auth.html"},"url":"http://drafts.nicktorba.com/2020/09/13/PyKubectl_auth.html","headline":"Title","datePublished":"2020-09-13T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://drafts.nicktorba.com/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Title | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Title" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Imma write some things here" />
+<meta property="og:description" content="Imma write some things here" />
+<link rel="canonical" href="http://drafts.nicktorba.com/2020/09/13/PyKubectl_auth.html" />
+<meta property="og:url" content="http://drafts.nicktorba.com/2020/09/13/PyKubectl_auth.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-13T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-09-13T00:00:00-05:00","description":"Imma write some things here","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://drafts.nicktorba.com/2020/09/13/PyKubectl_auth.html"},"url":"http://drafts.nicktorba.com/2020/09/13/PyKubectl_auth.html","headline":"Title","datePublished":"2020-09-13T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="http://drafts.nicktorba.com/feed.xml" title="Turbo" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    // remove paragraph tags in rendered toc (happens from notebooks)
+    var toctags = document.querySelectorAll(".toc-entry")
+    toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Turbo</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Title</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-09-13T00:00:00-05:00" itemprop="datePublished">
+        Sep 13, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      1 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+<a href="https://github.com/ntorba/writing/tree/master/_notebooks/PyKubectl_auth.ipynb" role="button">
+    <img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+</a>
+</div><div class="px-2">
+    <a href="https://colab.research.google.com/github/ntorba/writing/blob/master/_notebooks/PyKubectl_auth.ipynb">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/PyKubectl_auth.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">authenticated_rest</span> <span class="kn">import</span> <span class="n">get_pool_manager</span>
+<span class="n">pool_manager</span><span class="p">,</span> <span class="n">cluster_info</span> <span class="o">=</span> <span class="n">get_pool_manager</span><span class="p">()</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="n">cluster_info</span><span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/apis/&quot;</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">,</span> <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;OpenAPI-Generator/12.0.0-snapshot/python&#39;</span><span class="p">,</span> <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">pool_manager</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+    <span class="s2">&quot;GET&quot;</span><span class="p">,</span> 
+    <span class="n">url</span><span class="p">,</span> 
+    <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> 
+    <span class="n">preload_content</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+<span class="c1"># json.loads(r.data)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>200
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>kubectx
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>arn:aws:eks:us-east-1:792852952478:cluster/amp-provider-nasa-dev1
+arn:aws:eks:us-west-2:600765618583:cluster/mlp-eks-dev-cluster-03
+docker-desktop
+docker-for-desktop
+<span class="ansi-yellow-fg ansi-black-bg">kind-kind</span>
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span> 
+<span class="kn">import</span> <span class="nn">json</span> 
+<span class="k">class</span> <span class="nc">Kubectl</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool_manager</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_info</span> <span class="o">=</span> <span class="n">get_pool_manager</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_info</span><span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/apis&quot;</span>
+        
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plural</span><span class="p">,</span> <span class="n">api</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">):</span>
+        <span class="n">get_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">api</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;/namespaces&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">plural</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;get_url = &quot;</span><span class="p">,</span> <span class="n">get_url</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">pool_manager</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+            <span class="s2">&quot;GET&quot;</span><span class="p">,</span> 
+            <span class="n">get_url</span><span class="p">,</span> 
+            <span class="n">preload_content</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span>
+        
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">plural</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        args:</span>
+<span class="sd">            resource_name: If you are doing an update, you need to add the name of the actualy deployment to the end of the url </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">deployment</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plural</span><span class="p">:</span> 
+            <span class="n">plural</span> <span class="o">=</span> <span class="n">deployment</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">deployment</span><span class="p">[</span><span class="s1">&#39;apiVersion&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;/namespaces&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">plural</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">pool_manager</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+            <span class="s2">&quot;POST&quot;</span><span class="p">,</span> 
+            <span class="n">url</span><span class="p">,</span> 
+            <span class="n">body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">request_body</span><span class="p">),</span>
+            <span class="n">preload_content</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span>
+    
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fpath</span><span class="p">,</span> <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">plural</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resource_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        args:</span>
+<span class="sd">            resource_name: If you are doing an update, you need to add the name of the actualy deployment to the end of the url </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">deployment</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plural</span><span class="p">:</span> 
+            <span class="n">plural</span> <span class="o">=</span> <span class="n">deployment</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">deployment</span><span class="p">[</span><span class="s1">&#39;apiVersion&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;/namespaces&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">plural</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">resource_name</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">url</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">resource_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">request_body</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">deployment</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">request_body</span><span class="p">))</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">pool_manager</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+            <span class="s2">&quot;PATCH&quot;</span><span class="p">,</span> 
+            <span class="n">url</span><span class="p">,</span> 
+            <span class="n">body</span><span class="o">=</span><span class="n">request_body</span><span class="p">,</span>
+            <span class="n">preload_content</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">,</span> <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/merge-patch+json&#39;</span><span class="p">,</span> <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;OpenAPI-Generator/12.0.0-snapshot/python&#39;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span>
+
+<span class="n">kubectl</span> <span class="o">=</span> <span class="n">Kubectl</span><span class="p">()</span>
+
+<span class="n">update_sdep_r</span> <span class="o">=</span> <span class="n">kubectl</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;/Users/ntorba605/ntorba605/amp/cd/vsgdummy.json&quot;</span><span class="p">,</span> <span class="n">resource_name</span><span class="o">=</span><span class="s2">&quot;vsgdummy-002&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">update_sdep_r</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+<span class="n">list_sdeps_r</span> <span class="o">=</span> <span class="n">kubectl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seldondeployments&quot;</span><span class="p">,</span> <span class="s2">&quot;machinelearning.seldon.io/v1alpha2&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">list_sdeps_r</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+
+<span class="n">pods</span> <span class="o">=</span> <span class="n">kubectl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pods&quot;</span><span class="p">,</span> <span class="s2">&quot;apps/v1&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pods</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>https://127.0.0.1:32768/apis/machinelearning.seldon.io/v1alpha2/namespaces/default/seldondeployments/vsgdummy-002
+&lt;class &#39;str&#39;&gt;
+200
+get_url =  https://127.0.0.1:32768/apis/machinelearning.seldon.io/v1alpha2/namespaces/default/seldondeployments
+200
+get_url =  https://127.0.0.1:32768/apis/apps/v1/namespaces/default/pods
+404
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="s1">&#39;https://127.0.0.1:32768/apis/machinelearning.seldon.io/v1alpha2/namespaces/default/seldondeployments/vsgdummy-002&#39;</span> <span class="o">==</span> <span class="s2">&quot;https://127.0.0.1:32768/apis/machinelearning.seldon.io/v1alpha2/namespaces/default/seldondeployments/vsgdummy-002&quot;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>True</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">update_sdep_r</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>dict_keys([&#39;apiVersion&#39;, &#39;kind&#39;, &#39;metadata&#39;, &#39;spec&#39;, &#39;status&#39;])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">list_sdeps_r</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>dict_keys([&#39;apiVersion&#39;, &#39;items&#39;, &#39;kind&#39;, &#39;metadata&#39;])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><a class="u-url" href="/2020/09/13/PyKubectl_auth.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Imma write some things here</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/ntorba" title="ntorba"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/nicktorba" title="nicktorba"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

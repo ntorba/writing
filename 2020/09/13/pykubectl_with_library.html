@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Title | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Title" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Imma write some things here" />
+<meta property="og:description" content="Imma write some things here" />
+<link rel="canonical" href="http://drafts.nicktorba.com/2020/09/13/pykubectl_with_library.html" />
+<meta property="og:url" content="http://drafts.nicktorba.com/2020/09/13/pykubectl_with_library.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-13T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-09-13T00:00:00-05:00","description":"Imma write some things here","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://drafts.nicktorba.com/2020/09/13/pykubectl_with_library.html"},"url":"http://drafts.nicktorba.com/2020/09/13/pykubectl_with_library.html","headline":"Title","datePublished":"2020-09-13T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://drafts.nicktorba.com/feed.xml" title="Turbo" /><link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Title | Turbo</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Title" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Imma write some things here" />
+<meta property="og:description" content="Imma write some things here" />
+<link rel="canonical" href="http://drafts.nicktorba.com/2020/09/13/pykubectl_with_library.html" />
+<meta property="og:url" content="http://drafts.nicktorba.com/2020/09/13/pykubectl_with_library.html" />
+<meta property="og:site_name" content="Turbo" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-13T00:00:00-05:00" />
+<script type="application/ld+json">
+{"dateModified":"2020-09-13T00:00:00-05:00","description":"Imma write some things here","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://drafts.nicktorba.com/2020/09/13/pykubectl_with_library.html"},"url":"http://drafts.nicktorba.com/2020/09/13/pykubectl_with_library.html","headline":"Title","datePublished":"2020-09-13T00:00:00-05:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<link href="https://unpkg.com/@primer/css/dist/primer.css" rel="stylesheet" />
+<link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css"><link type="application/atom+xml" rel="alternate" href="http://drafts.nicktorba.com/feed.xml" title="Turbo" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    // remove paragraph tags in rendered toc (happens from notebooks)
+    var toctags = document.querySelectorAll(".toc-entry")
+    toctags.forEach(e => (e.firstElementChild.innerText = e.firstElementChild.innerText.replace('¶', '')))
+    });
+</script>
+</head><body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Turbo</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Title</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2020-09-13T00:00:00-05:00" itemprop="datePublished">
+        Sep 13, 2020
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      1 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+<a href="https://github.com/ntorba/writing/tree/master/_notebooks/pykubectl_with_library.ipynb" role="button">
+    <img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+</a>
+</div><div class="px-2">
+    <a href="https://colab.research.google.com/github/ntorba/writing/blob/master/_notebooks/pykubectl_with_library.ipynb">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/pykubectl_with_library.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">json</span> 
+<span class="kn">from</span> <span class="nn">pykubectl.authenticated_rest</span> <span class="kn">import</span> <span class="n">load_kubeconfig</span>
+<span class="kn">from</span> <span class="nn">pykubectl.kubectl_client</span> <span class="kn">import</span> <span class="n">Pykubectl</span>
+<span class="n">kc</span> <span class="o">=</span> <span class="n">load_kubeconfig</span><span class="p">()</span>
+<span class="n">kc</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>dict_keys([&#39;apiVersion&#39;, &#39;clusters&#39;, &#39;contexts&#39;, &#39;current-context&#39;, &#39;kind&#39;, &#39;preferences&#39;, &#39;users&#39;])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pk</span> <span class="o">=</span> <span class="n">Pykubectl</span><span class="p">()</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">pk</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pods&quot;</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>get_url =  https://127.0.0.1:32770/api/v1/namespaces/default/pods
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&#39;seldon-92a927e5e90d7602e08ba9b9304f70e8-64b4dd45ff-hvf4c&#39;,
+ &#39;seldon-controller-manager-655fc4ccb6-8x85v&#39;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">pk</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;sklearn_iris_deployment.yaml&quot;</span><span class="p">)</span>
+<span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;kind&#39;: &#39;Status&#39;,
+ &#39;apiVersion&#39;: &#39;v1&#39;,
+ &#39;metadata&#39;: {},
+ &#39;status&#39;: &#39;Failure&#39;,
+ &#39;message&#39;: &#39;seldondeployments.machinelearning.seldon.io &#34;seldon-deployment-example&#34; already exists&#39;,
+ &#39;reason&#39;: &#39;AlreadyExists&#39;,
+ &#39;details&#39;: {&#39;name&#39;: &#39;seldon-deployment-example&#39;,
+  &#39;group&#39;: &#39;machinelearning.seldon.io&#39;,
+  &#39;kind&#39;: &#39;seldondeployments&#39;},
+ &#39;code&#39;: 409}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">pk</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seldondeployments&quot;</span><span class="p">,</span> <span class="n">resource_name</span><span class="o">=</span><span class="s2">&quot;seldon-deployment-example&quot;</span><span class="p">)</span>
+<span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>get_url =  https://127.0.0.1:32770/apis/machinelearning.seldon.io/v1alpha2/namespaces/default/seldondeployments/seldon-deployment-example
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;apiVersion&#39;: &#39;machinelearning.seldon.io/v1alpha2&#39;,
+ &#39;kind&#39;: &#39;SeldonDeployment&#39;,
+ &#39;metadata&#39;: {&#39;creationTimestamp&#39;: &#39;2020-09-11T13:18:55Z&#39;,
+  &#39;generation&#39;: 2,
+  &#39;name&#39;: &#39;seldon-deployment-example&#39;,
+  &#39;namespace&#39;: &#39;default&#39;,
+  &#39;resourceVersion&#39;: &#39;11781&#39;,
+  &#39;selfLink&#39;: &#39;/apis/machinelearning.seldon.io/v1alpha2/namespaces/default/seldondeployments/seldon-deployment-example&#39;,
+  &#39;uid&#39;: &#39;915ec080-ad1d-4c4d-a168-9b94841ffe4c&#39;},
+ &#39;spec&#39;: {&#39;name&#39;: &#39;sklearn-iris-deployment&#39;,
+  &#39;predictors&#39;: [{&#39;componentSpecs&#39;: [{&#39;metadata&#39;: {&#39;creationTimestamp&#39;: None},
+      &#39;spec&#39;: {&#39;containers&#39;: [{&#39;image&#39;: &#39;seldonio/sklearn-iris:0.1&#39;,
+         &#39;imagePullPolicy&#39;: &#39;IfNotPresent&#39;,
+         &#39;name&#39;: &#39;sklearn-iris-classifier&#39;,
+         &#39;ports&#39;: [{&#39;containerPort&#39;: 6000,
+           &#39;name&#39;: &#39;metrics&#39;,
+           &#39;protocol&#39;: &#39;TCP&#39;}],
+         &#39;resources&#39;: {},
+         &#39;volumeMounts&#39;: [{&#39;mountPath&#39;: &#39;/etc/podinfo&#39;,
+           &#39;name&#39;: &#39;seldon-podinfo&#39;}]}]}}],
+    &#39;engineResources&#39;: {},
+    &#39;graph&#39;: {&#39;endpoint&#39;: {&#39;service_host&#39;: &#39;localhost&#39;,
+      &#39;service_port&#39;: 9000,
+      &#39;type&#39;: &#39;REST&#39;},
+     &#39;implementation&#39;: &#39;UNKNOWN_IMPLEMENTATION&#39;,
+     &#39;name&#39;: &#39;sklearn-iris-classifier&#39;,
+     &#39;type&#39;: &#39;MODEL&#39;},
+    &#39;labels&#39;: {&#39;version&#39;: &#39;sklearn-iris-predictor&#39;},
+    &#39;name&#39;: &#39;sklearn-iris-predictor&#39;,
+    &#39;replicas&#39;: 2,
+    &#39;svcOrchSpec&#39;: {}}]},
+ &#39;status&#39;: {&#39;address&#39;: {&#39;url&#39;: &#39;http://seldon-deployment-example-sklearn-iris-predictor.default.svc.cluster.local:8000/api/v1.0/predictions&#39;},
+  &#39;deploymentStatus&#39;: {&#39;seldon-92a927e5e90d7602e08ba9b9304f70e8&#39;: {&#39;availableReplicas&#39;: 1,
+    &#39;replicas&#39;: 2}},
+  &#39;replicas&#39;: 2,
+  &#39;serviceStatus&#39;: {&#39;seldon-d0934233541ef6b732c88680f8a0e94f&#39;: {&#39;httpEndpoint&#39;: &#39;seldon-d0934233541ef6b732c88680f8a0e94f.default:9000&#39;,
+    &#39;svcName&#39;: &#39;seldon-d0934233541ef6b732c88680f8a0e94f&#39;},
+   &#39;seldon-deployment-example-sklearn-iris-predictor&#39;: {&#39;grpcEndpoint&#39;: &#39;seldon-deployment-example-sklearn-iris-predictor.default:5001&#39;,
+    &#39;httpEndpoint&#39;: &#39;seldon-deployment-example-sklearn-iris-predictor.default:8000&#39;,
+    &#39;svcName&#39;: &#39;seldon-deployment-example-sklearn-iris-predictor&#39;}},
+  &#39;state&#39;: &#39;Creating&#39;}}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">pk</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;sklearn_iris_deployment.yaml&quot;</span><span class="p">)</span>
+<span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>https://127.0.0.1:32770/apis/machinelearning.seldon.io/v1alpha2/namespaces/default/seldondeployments/seldon-deployment-example
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>dict_keys([&#39;apiVersion&#39;, &#39;kind&#39;, &#39;metadata&#39;, &#39;spec&#39;, &#39;status&#39;])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+</div>
+
+
+
+  </div><a class="u-url" href="/2020/09/13/pykubectl_with_library.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Imma write some things here</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/ntorba" title="ntorba"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/nicktorba" title="nicktorba"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
